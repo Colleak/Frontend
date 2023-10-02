@@ -1,5 +1,4 @@
 import {StyleSheet, View, Text, Button, ScrollView} from 'react-native';
-import { LatLng } from 'react-native-leaflet-view';
 import React from "react";
 import CustomMap from "./components/CustomMap";
 import EmployeeListItem from "../../components/EmployeeListItem";
