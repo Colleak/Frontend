@@ -2,6 +2,7 @@ import {StyleSheet, View, Text, Button, ScrollView} from 'react-native';
 import React from "react";
 import CustomMap from "./components/CustomMap";
 import EmployeeListItem from "../../components/EmployeeListItem";
+import EmployeeComponent from '../../components/EmployeeComponent';
 
 type HomeScreenProps = {
     navigation: any;
@@ -42,6 +43,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                         onMessage={() => console.log(employee.actions.message)}
                     />
                 ))}
+                <EmployeeComponent />
             </ScrollView>
         </View>
     );
