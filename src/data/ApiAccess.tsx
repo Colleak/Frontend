@@ -1,4 +1,4 @@
-import Employee from "../user/Employees";
+import Employee from "../models/user/Employees";
 import AppData from "../../AppData.json";
 
 async function getApp(): Promise<Employee[] | number> {
@@ -7,7 +7,6 @@ async function getApp(): Promise<Employee[] | number> {
     if (!response.ok) {
         return response.status;
     }
-    let employees: Employee[] = (await response.json()) as Employee[];
-    return employees;
+    return (await response.json()) as Employee[];
 }
 export default getApp;

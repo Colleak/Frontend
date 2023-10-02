@@ -1,5 +1,5 @@
 import { Component, ReactNode } from "react";
-import Employee from "../user/Employees";
+import Employee from "../models/user/Employees";
 import { Text, View } from "react-native";
 import getApp from "../data/ApiAccess";
 

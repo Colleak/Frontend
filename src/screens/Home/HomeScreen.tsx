@@ -1,8 +1,9 @@
-import {StyleSheet, View, Text, Button, ScrollView} from 'react-native';
+import {StyleSheet, View, ScrollView} from 'react-native';
 import React from "react";
 import CustomMap from "./components/CustomMap";
 import EmployeeListItem from "../../components/EmployeeListItem";
 import EmployeeComponent from '../../components/EmployeeComponent';
+import NavBar from "../../components/NavBar";
 
 type HomeScreenProps = {
     navigation: any;
@@ -18,14 +19,7 @@ const employees = [
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     return (
         <View style={styles.container}>
-            <Text>Home Screen</Text>
-            <Button
-                title="Go to Details"
-                onPress={() => navigation.navigate('Details', {
-                    itemId: 86,
-                    otherParam: 'anything you want here',
-                })}
-            />
+            <NavBar logoSource={require("../../assets/images/ioLogoBlue.png")}/>
             <View style={styles.mapContainer}>
                 <CustomMap
                     mapSource={require("../../assets/images/penguinmapblue.png")}
@@ -59,7 +53,6 @@ const styles = StyleSheet.create({
     mapContainer: {
         width: '100%',
         height: '40%',
-        backgroundColor: 'yellow',
     },
     employeeList: {
         height: '50%',
