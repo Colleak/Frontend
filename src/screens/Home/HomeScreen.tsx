@@ -1,5 +1,8 @@
-import { StyleSheet, View, Text, Button, SafeAreaView } from 'react-native';
-import { LatLng, LeafletView, MapLayerType } from 'react-native-leaflet-view';
+import {StyleSheet, View, Text, Button, ScrollView} from 'react-native';
+import { LatLng } from 'react-native-leaflet-view';
+import React from "react";
+import CustomMap from "./components/CustomMap";
+import EmployeeListItem from "../../components/EmployeeListItem";
 
 type HomeScreenProps = {
     navigation: any;
@@ -10,10 +13,16 @@ const DEFAULT_COORDINATE: LatLng = {
     lng: 0.500,
 };
 
-// Define the bounds for your custom image
 const IMAGE_BOUNDS = [
     [0, 1.920], // top-left corner
     [1.080, 0] // bottom-right corner
+];
+
+const employees = [
+    { name: "John Doe", actions: { ping: 'Ping John', call: 'Call John', message: 'Message John' } },
+    { name: "Jane Doe", actions: { ping: 'Ping Jane', call: 'Call Jane', message: 'Message Jane' } },
+    { name: "John Smith", actions: { ping: 'Ping John', call: 'Call John', message: 'Message John' } },
+    { name: "Jane Smith", actions: { ping: 'Ping Jane', call: 'Call Jane', message: 'Message Jane' } },
 ];
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
@@ -27,33 +36,24 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                     otherParam: 'anything you want here',
                 })}
             />
-            <LeafletView
-                mapMarkers={[
-                    {
-                        position: DEFAULT_COORDINATE,
-                        icon: '📍',
-                        size: [32, 32],
-                    },
-                    {
-                        position: [0.500, 0.600],
-                        icon: '📍',
-                        size: [32, 32],
-                    },
-                    {
-                        position: [0.560, 0.670],
-                        icon: '📍',
-                        size: [32, 32],
-                    },
-                ]}
-                mapLayers={[
-                    {
-                        layerType: MapLayerType.IMAGE_LAYER,
-                        url: 'https://clubpenguinmountains.com/wp-content/uploads/2014/05/screenshot_13.png', // Replace with the URL of your custom image
-                        bounds: IMAGE_BOUNDS,
-                    }
-                ]}
-                mapCenterPosition={DEFAULT_COORDINATE}
-            />
+            <View style={styles.mapContainer}>
+                <CustomMap
+                    mapSource={require("../../assets/images/penguinmapblue.png")}
+                    markerSource={require("../../assets/images/tempmarker.jpg")}
+                    markerCoords={{ x: 0, y: 0 }}
+                />
+            </View>
+            <ScrollView style={styles.employeeList}>
+                {employees.map((employee, index) => (
+                    <EmployeeListItem
+                        key={index}
+                        name={employee.name}
+                        onPing={() => console.log(employee.actions.ping)}
+                        onCall={() => console.log(employee.actions.call)}
+                        onMessage={() => console.log(employee.actions.message)}
+                    />
+                ))}
+            </ScrollView>
         </View>
     );
 }
@@ -61,14 +61,23 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent:'center'
-    },
-    root: {
-        flex: 1,
+        alignItems: "center",
         justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: "blue"
     },
+    mapContainer: {
+        width: '100%',
+        height: '40%',
+        backgroundColor: 'yellow',
+    },
+    employeeList: {
+        height: '50%',
+        width: '98%',
+        backgroundColor: 'white',
+        marginTop: 5,
+        borderRadius: 30,
+        overflow: 'hidden',
+    }
 });
 
 export default HomeScreen;
