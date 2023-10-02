@@ -25,8 +25,8 @@ const CustomMap: React.FC<CustomMap2Props> = ({ mapSource, markerSource, markerC
                     {
                         left: markerCoords.x * scaleFactor,
                         top: markerCoords.y * scaleFactor,
-                        width: 50 * scaleFactor,
-                        height: 50 * scaleFactor,
+                        width: 250 * scaleFactor,
+                        height: 250 * scaleFactor,
                     },
                 ]}
             >

@@ -1,27 +1,40 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import RootNavigator from './src/navigation/RootNavigator';
-import EmployeeComponent from './src/components/EmployeeComponent';
+import { StatusBar } from 'react-native';
+import LoadingComponent from "./src/components/LoadingComponents";
 
 export default function App() {
-  return (
- 
-      <NavigationContainer>
-        <RootNavigator />
+    const [fontsLoaded, setFontsLoaded] = useState(false);
 
-      </NavigationContainer>
+    useEffect(() => {
+        async function loadFontsAsync() {
+            await Font.loadAsync({
+                'TTCommonsMedium': require('./src/assets/fonts/TTCommons-Medium.ttf'),
+                // add more fonts later
+            });
+            setFontsLoaded(true);
+        }
 
-   
+        loadFontsAsync();
+    }, []);
 
-      
-  );
+    if (!fontsLoaded) {
+        return <LoadingComponent/>;
+    }
+
+    return (
+        <>
+            <StatusBar barStyle="dark-content"/>
+            <NavigationContainer>
+                <RootNavigator/>
+            </NavigationContainer>
+        </>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+
 });
