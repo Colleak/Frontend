@@ -8,16 +8,6 @@ type HomeScreenProps = {
     navigation: any;
 }
 
-const DEFAULT_COORDINATE: LatLng = {
-    lat: 0.500,
-    lng: 0.500,
-};
-
-const IMAGE_BOUNDS = [
-    [0, 1.920], // top-left corner
-    [1.080, 0] // bottom-right corner
-];
-
 const employees = [
     { name: "John Doe", actions: { ping: 'Ping John', call: 'Call John', message: 'Message John' } },
     { name: "Jane Doe", actions: { ping: 'Ping Jane', call: 'Call Jane', message: 'Message Jane' } },

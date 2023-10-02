@@ -1,5 +1,5 @@
 // CustomMap2.tsx
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Image, View, ScrollView, StyleSheet, LayoutChangeEvent } from 'react-native';
 
 interface CustomMap2Props {
