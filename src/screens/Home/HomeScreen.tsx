@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, Button, SafeAreaView } from 'react-native';
 import { LatLng, LeafletView, MapLayerType } from 'react-native-leaflet-view';
-
+import EmployeeComponent from '../../components/EmployeeComponent';
 type HomeScreenProps = {
     navigation: any;
 }
@@ -27,7 +27,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                     otherParam: 'anything you want here',
                 })}
             />
-            <LeafletView
+            <EmployeeComponent />
+
+            {/* <LeafletView
                 mapMarkers={[
                     {
                         position: DEFAULT_COORDINATE,
@@ -53,7 +55,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                     }
                 ]}
                 mapCenterPosition={DEFAULT_COORDINATE}
-            />
+            /> */}
         </View>
     );
 }
