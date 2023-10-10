@@ -23,12 +23,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           text: "Yes",
           onPress: () => {
             setPermissionForLocation(true);
+              //TODO update the user info when pressed. using an api update.
+              
           },
         },
         {
           text: "No",
           onPress: () => {
             setPermissionForLocation(false);
+
           },
         },
       ],
@@ -36,6 +39,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     );
   };
   useEffect(() => {
+      //TODO add a fetch to see if the user wants to share their location. if yes dont show the Alert (if statement maybe)
     askForLocationPermissionAlert();
   }, []);
   return (
@@ -62,6 +66,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           trackColor={{ false: "#575757", true: "#66b8ff" }}
           ios_backgroundColor={"#ffffff"}
           onValueChange={setPermissionForLocation}
+                //TODO update the user info when pressed. using an api update.
+                //TODO Also need to make sure the db getsupdate to false if slider says false
           value={permissionForLocation}
         />
       </View>
