@@ -1,4 +1,4 @@
-import {StyleSheet, View, Text, Alert} from 'react-native';
+import {StyleSheet, View, Text, Alert, Switch} from 'react-native';
 import React, {useState, useEffect} from "react";
 import CustomMap from "./components/CustomMap";
 import EmployeeList from "../../components/EmployeeList";
@@ -40,12 +40,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   }, []);
   return (
     <View style={styles.container}>
+
       <NavBar logoSource={require("../../assets/images/ioLogoBlue.png")} />
-      <Text>
-        {permissionForLocation
-          ? "Location permission granted!"
-          : "Location permission denied!"}
-      </Text>
+      
       <View style={styles.mapContainer}>
         <CustomMap
           mapSource={require("../../assets/images/penguinmapblue.png")}
@@ -54,7 +51,21 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         />
         <Text style={styles.floorText}>{floor}</Text>
       </View>
-      <EmployeeList />
+      <View style={styles.permission}>
+        <Text style={styles.permissionItem}>
+          {permissionForLocation
+            ? "Location permission granted!"
+            : "Location permission denied! "}
+        </Text>
+        <Switch
+          style={styles.switch}
+          trackColor={{ false: "#575757", true: "#66b8ff" }}
+          ios_backgroundColor={"#ffffff"}
+          onValueChange={setPermissionForLocation}
+          value={permissionForLocation}
+        />
+      </View>
+      <EmployeeList/>
     </View>
   );
 }
@@ -78,7 +89,26 @@ const styles = StyleSheet.create({
         top: "8%",
         left: "4%",
         textTransform: 'uppercase',
+    },
+    permission: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        width: '80%',
+        marginBottom: 10,
+    },
+    permissionItem: {
+        marginLeft: 10,
+        color: 'white',
+    },
+    switch: {
+        marginLeft: 10,
+        color: 'white',
+        position: 'absolute',
+        right: 0,
     }
+
 });
 
 export default HomeScreen;
