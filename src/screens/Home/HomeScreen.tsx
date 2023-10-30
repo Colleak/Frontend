@@ -49,9 +49,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       
       <View style={styles.mapContainer}>
         <CustomMap
-          mapSource={require("../../assets/images/penguinmapblue.png")}
+          mapSource={require("../../assets/images/colleak2dfloorplan.png")}
           markerSource={require("../../assets/images/wifi-signal-marker.png")}
-          markerCoords={{ x: 0, y: 830 }}
+          markerCoords={{ x: 830, y: 620 }}
         />
         <Text style={styles.floorText}>{floor}</Text>
       </View>
