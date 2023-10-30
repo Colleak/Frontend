@@ -5,12 +5,12 @@ import getApp from "../data/ApiAccess";
 import LoadingComponent from "./LoadingComponents";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-
 type EmployeeListState = {
     employees: {
         id: string;
         name: string;
+        router: string;
+
         actions: {
             ping: () => void;
             call: () => void;
@@ -30,6 +30,7 @@ class EmployeeList extends Component<{}, EmployeeListState> {
                 const transformedData = employeeData.map(employee => ({
                     id: employee.id.toString(), // Convert id to string
                     name: employee.employeeName,
+                    router: employee.connectedRouterName,
                     actions: {
                         ping: () => console.log('Ping', employee.employeeName),
                         call: () => console.log('Call', employee.employeeName),
@@ -43,22 +44,33 @@ class EmployeeList extends Component<{}, EmployeeListState> {
         });
     }
 
+   locations = [
+    {"EHV-AP-04-02": {
+        "x": 400,
+        "y": 400
+    }},
+    {"EHV-AP-04-03": {
+        "x": 800,
+        "y": 400
+    }},
+    {"EHV-AP-04-04": {
+        "x": 400,
+        "y": 800
+    }}];
+
     createCurrentUser = () => {
         const currentUser =
             {
                 "x": 400,
                 "y": 400
-              }
+            }
 
-        AsyncStorage.setItem("currentUserCoordinates", JSON.stringify(currentUser)).then(() => {
-            console.log("unparsed coordinates employeelist:", currentUser);
-        });
+        AsyncStorage.setItem("currentUserCoordinates", JSON.stringify(currentUser));
     }
 
     readCurrentUser = async () => {
         try {
           const coordinates = await AsyncStorage.getItem("currentUserCoordinates")
-          console.log("Reading coordinates employeelist");
             if (coordinates) {
               const parsedCoordinates = JSON.parse(coordinates);
               console.log("parsed coordinates employeelist", parsedCoordinates);

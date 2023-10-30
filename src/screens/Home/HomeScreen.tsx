@@ -42,26 +42,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     );
   };
 
-  const initialStorage = async () => {
-    try {
-      const currentUser =
-          {
-            "x": 400,
-            "y": 400
-          };
-  
-    await AsyncStorage.setItem("currentUserCoordinates", JSON.stringify(currentUser)).then(() => {
-        console.log("initial storage:", currentUser);
-    });
-    } catch (error) {
-      return
-    }
-  }
+
 
   const readStorage = async () => {
     try {
       const coordinates = await AsyncStorage.getItem("currentUserCoordinates")
-      console.log("unparsed coordinates homescreen: ",coordinates);
         if (coordinates) {
           const parsedCoordinates = JSON.parse(coordinates);
           setMarkerCoords(parsedCoordinates);
@@ -74,12 +59,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   useEffect(() => {
 
-    initialStorage();
     readStorage();
 
       //TODO add a fetch to see if the user wants to share their location. if yes dont show the Alert (if statement maybe)
     askForLocationPermissionAlert();
   }, [userLoaded]);
+
   return (
     <View style={styles.container}>
 
