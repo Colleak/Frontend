@@ -50,7 +50,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         if (coordinates) {
           const parsedCoordinates = JSON.parse(coordinates);
           setMarkerCoords(parsedCoordinates);
-          console.log("parsed coordinates homescreen", parsedCoordinates);
         }
     } catch (error) {
       return;

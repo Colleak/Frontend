@@ -73,7 +73,6 @@ class EmployeeList extends Component<{}, EmployeeListState> {
           const coordinates = await AsyncStorage.getItem("currentUserCoordinates")
             if (coordinates) {
               const parsedCoordinates = JSON.parse(coordinates);
-              console.log("parsed coordinates employeelist", parsedCoordinates);
             }
         } catch (error) {
           return;
