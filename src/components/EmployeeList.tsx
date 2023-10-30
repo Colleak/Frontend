@@ -8,12 +8,14 @@ import {
 import EmployeeListItem from "./EmployeeListItem";
 import getApp from "../data/ApiAccess";
 import LoadingComponent from "./LoadingComponents";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class EmployeeList extends Component {
     state = {
         employees: [] as {
             id: string;
             name: string;
+            router: string;
             actions: {
                 ping: () => void;
                 call: () => void;
@@ -29,6 +31,7 @@ class EmployeeList extends Component {
                 const transformedData = employeeData.map(employee => ({
                     id: employee.id.toString(),
                     name: employee.employeeName,
+                    router: employee.connectedRouterName,
                     actions: {
                         ping: () => console.log('Ping', employee.employeeName),
                         call: () => console.log('Call', employee.employeeName),
@@ -42,12 +45,50 @@ class EmployeeList extends Component {
         });
     }
 
+   locations = [
+    {"EHV-AP-04-02": {
+        "x": 400,
+        "y": 400
+    }},
+    {"EHV-AP-04-03": {
+        "x": 800,
+        "y": 400
+    }},
+    {"EHV-AP-04-04": {
+        "x": 400,
+        "y": 800
+    }}];
+
+    createCurrentUser = () => {
+        const currentUser =
+            {
+                "x": 400,
+                "y": 400
+            }
+
+        AsyncStorage.setItem("currentUserCoordinates", JSON.stringify(currentUser));
+    }
+
+    readCurrentUser = async () => {
+        try {
+          const coordinates = await AsyncStorage.getItem("currentUserCoordinates")
+            if (coordinates) {
+              const parsedCoordinates = JSON.parse(coordinates);
+            }
+        } catch (error) {
+          return;
+        }
+      }
+  
     handleSearch = (text: string) => {
         this.setState({ searchTerm: text });
     };
 
     render() {
         const { employees, searchTerm } = this.state;
+
+        this.createCurrentUser();
+        this.readCurrentUser();
 
         if (!employees) {
             return (
