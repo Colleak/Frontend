@@ -5,6 +5,8 @@ import getApp from "../data/ApiAccess";
 import LoadingComponent from "./LoadingComponents";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+
 type EmployeeListState = {
     employees: {
         id: string;
@@ -42,26 +44,29 @@ class EmployeeList extends Component<{}, EmployeeListState> {
     }
 
     createCurrentUser = () => {
-        const currentUser = {
-            "coordinates": {
+        const currentUser =
+            {
                 "x": 400,
                 "y": 400
               }
-        };
 
         AsyncStorage.setItem("currentUserCoordinates", JSON.stringify(currentUser)).then(() => {
-            console.log("Current user:", currentUser);
+            console.log("unparsed coordinates employeelist:", currentUser);
         });
     }
 
-    readCurrentUser = () => {
-        AsyncStorage.getItem("currentUserCoordinates").then((coordinates) => {
+    readCurrentUser = async () => {
+        try {
+          const coordinates = await AsyncStorage.getItem("currentUserCoordinates")
+          console.log("Reading coordinates employeelist");
             if (coordinates) {
               const parsedCoordinates = JSON.parse(coordinates);
-              console.log("Parsed coordinates: ", parsedCoordinates);
+              console.log("parsed coordinates employeelist", parsedCoordinates);
             }
-        });
-    }
+        } catch (error) {
+          return;
+        }
+      }
 
     render() {
         const { employees } = this.state;
