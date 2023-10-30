@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import RootNavigator from './src/navigation/RootNavigator';
+import DrawerNavigator from "./src/navigation/DrawerNavigator";
+import 'react-native-gesture-handler';
 import { StatusBar } from 'react-native';
 import LoadingComponent from "./src/components/LoadingComponents";
 
