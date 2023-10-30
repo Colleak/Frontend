@@ -3,6 +3,7 @@ import React, {useState, useEffect} from "react";
 import CustomMap from "./components/CustomMap";
 import EmployeeList from "../../components/EmployeeList";
 import NavBar from "../../components/NavBar";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type HomeScreenProps = {
     navigation: any;
@@ -13,7 +14,9 @@ const floor = "Floor 1";
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   
+  const [markerCoords, setMarkerCoords] = useState({ x: 0, y: 830 });
   const [permissionForLocation, setPermissionForLocation] = useState(false);
+  const [userLoaded, setUserLoaded] = useState(false);
   const askForLocationPermissionAlert = () => {
     Alert.alert(
       "Location Permission Needed",
@@ -38,10 +41,28 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       { cancelable: false }
     );
   };
+
+  const readStorage = async () => {
+    try {
+      const coordinates = await AsyncStorage.getItem("currentUserCoordinates")
+      console.log("homescreen: ",coordinates);
+        if (coordinates) {
+          const parsedCoordinates = JSON.parse(coordinates);
+          setMarkerCoords(parsedCoordinates);
+          console.log(parsedCoordinates);
+        }
+    } catch (error) {
+      return;
+    }
+  }
+
   useEffect(() => {
+
+    readStorage();
+
       //TODO add a fetch to see if the user wants to share their location. if yes dont show the Alert (if statement maybe)
     askForLocationPermissionAlert();
-  }, []);
+  }, [userLoaded]);
   return (
     <View style={styles.container}>
 
@@ -51,7 +72,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         <CustomMap
           mapSource={require("../../assets/images/penguinmapblue.png")}
           markerSource={require("../../assets/images/wifi-signal-marker.png")}
-          markerCoords={{ x: 0, y: 830 }}
+          markerCoords={markerCoords}
         />
         <Text style={styles.floorText}>{floor}</Text>
       </View>

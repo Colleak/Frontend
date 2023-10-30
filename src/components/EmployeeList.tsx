@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import EmployeeListItem from "./EmployeeListItem";
 import getApp from "../data/ApiAccess";
 import LoadingComponent from "./LoadingComponents";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type EmployeeListState = {
     employees: {
@@ -40,8 +41,33 @@ class EmployeeList extends Component<{}, EmployeeListState> {
         });
     }
 
+    createCurrentUser = () => {
+        const currentUser = {
+            "coordinates": {
+                "x": 400,
+                "y": 400
+              }
+        };
+
+        AsyncStorage.setItem("currentUserCoordinates", JSON.stringify(currentUser)).then(() => {
+            console.log("Current user:", currentUser);
+        });
+    }
+
+    readCurrentUser = () => {
+        AsyncStorage.getItem("currentUserCoordinates").then((coordinates) => {
+            if (coordinates) {
+              const parsedCoordinates = JSON.parse(coordinates);
+              console.log("Parsed coordinates: ", parsedCoordinates);
+            }
+        });
+    }
+
     render() {
         const { employees } = this.state;
+
+        this.createCurrentUser();
+        this.readCurrentUser();
 
         if (!employees) {
             return (
