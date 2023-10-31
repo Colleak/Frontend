@@ -155,7 +155,8 @@ const styles = StyleSheet.create({
         width: '98%',
         backgroundColor: 'white',
         marginTop: 5,
-        borderRadius: 30,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
         overflow: 'hidden',
     },
     loadingContainer: {
