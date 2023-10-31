@@ -8,9 +8,19 @@ import {
 import EmployeeListItem from "./EmployeeListItem";
 import getApp from "../data/ApiAccess";
 import LoadingComponent from "./LoadingComponents";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class EmployeeList extends Component {
+interface Location {
+    [key: string]: {
+        x: number;
+        y: number;
+    };
+}
+
+interface EmployeeListProps {
+    updateMarkerCoords: (coords: { x: number; y: number }) => void;
+  }
+
+class EmployeeList extends Component<EmployeeListProps> {
     state = {
         employees: [] as {
             id: string;
@@ -23,7 +33,9 @@ class EmployeeList extends Component {
             };
         }[] | null,
         searchTerm: '',
+        previousLocation: null,
     };
+
 
     componentDidMount() {
         getApp().then(employeeData => {
@@ -45,50 +57,54 @@ class EmployeeList extends Component {
         });
     }
 
-   locations = [
-    {"EHV-AP-04-02": {
-        "x": 400,
-        "y": 400
-    }},
-    {"EHV-AP-04-03": {
-        "x": 800,
-        "y": 400
-    }},
-    {"EHV-AP-04-04": {
-        "x": 400,
-        "y": 800
-    }}];
-
-    createCurrentUser = () => {
-        const currentUser =
-            {
+    locations: Location[] = [
+        {
+            "EHV-AP-04-02": {
                 "x": 400,
                 "y": 400
             }
+        },
+        {
+            "EHV-AP-04-03": {
+                "x": 800,
+                "y": 400
+            }
+        },
+        {
+            "EHV-AP-04-04": {
+                "x": 400,
+                "y": 800
+            }
+        }];
 
-        AsyncStorage.setItem("currentUserCoordinates", JSON.stringify(currentUser));
+    findRouter = (filteredEmployees: {
+        id: string;
+        name: string;
+        router: string;
+        actions: {
+            ping: () => void;
+            call: () => void;
+            message: () => void;
+        };
+    }[]) => {
+        console.log(filteredEmployees);   
+
+        if (filteredEmployees.length === 1) {
+            const employee = filteredEmployees[0];
+            const location = this.locations.find(loc => loc[employee.router]);
+            if (location) {
+                const coordinates = location[employee.router];
+                this.props.updateMarkerCoords(coordinates);
+            }
+        }
     }
 
-    readCurrentUser = async () => {
-        try {
-          const coordinates = await AsyncStorage.getItem("currentUserCoordinates")
-            if (coordinates) {
-              const parsedCoordinates = JSON.parse(coordinates);
-            }
-        } catch (error) {
-          return;
-        }
-      }
-  
     handleSearch = (text: string) => {
         this.setState({ searchTerm: text });
     };
 
     render() {
         const { employees, searchTerm } = this.state;
-
-        this.createCurrentUser();
-        this.readCurrentUser();
 
         if (!employees) {
             return (
@@ -101,6 +117,8 @@ class EmployeeList extends Component {
         const filteredEmployees = employees.filter((employee) =>
             employee.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
+
+        this.findRouter(filteredEmployees);
 
         return (
             <View style={styles.container}>

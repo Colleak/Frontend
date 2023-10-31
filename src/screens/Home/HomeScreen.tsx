@@ -1,9 +1,8 @@
 import {StyleSheet, View, Text, Alert, Switch} from 'react-native';
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import CustomMap from "./components/CustomMap";
 import EmployeeList from "../../components/EmployeeList";
 import NavBar from "../../components/NavBar";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type HomeScreenProps = {
     navigation: any;
@@ -42,24 +41,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     );
   };
 
-
-
-  const readStorage = async () => {
-    try {
-      const coordinates = await AsyncStorage.getItem("currentUserCoordinates")
-        if (coordinates) {
-          const parsedCoordinates = JSON.parse(coordinates);
-          setMarkerCoords(parsedCoordinates);
-        }
-    } catch (error) {
-      return;
+  const updateMarkerCoords = useCallback((newCoords: { x: number; y: number }) => {
+    if (newCoords.x !== markerCoords.x || newCoords.y !== markerCoords.y) {
+        setMarkerCoords(newCoords);
     }
-  }
+}, [markerCoords, setMarkerCoords]);
 
   useEffect(() => {
-
-    readStorage();
-
       //TODO add a fetch to see if the user wants to share their location. if yes dont show the Alert (if statement maybe)
     askForLocationPermissionAlert();
   }, [userLoaded]);
@@ -93,7 +81,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           value={permissionForLocation}
         />
       </View>
-      <EmployeeList/>
+      <EmployeeList updateMarkerCoords={updateMarkerCoords}/>
     </View>
   );
 }
