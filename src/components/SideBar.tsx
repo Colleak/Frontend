@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 
 type SideBarProps = {
     navigation: any;
@@ -18,7 +18,9 @@ const SideBar: React.FC<SideBarProps> = ({ navigation, onClose, currentScreen}) 
     }
     return (
         <View style={styles.sidebar}>
-            <Text style={styles.header}></Text>
+            <View style={styles.header}>
+                <Image source={require("../assets/images/ioLogoWhite.png")} style={styles.logo}/>
+            </View>
             <TouchableOpacity style={styles.item} onPress={homePress}>
                 <Text style={styles.itemText}>
                     {currentScreen === 'Home' ? '● Home' : 'Home'}
@@ -50,20 +52,26 @@ const styles = StyleSheet.create({
         zIndex: 1000
     },
     header: {
-        fontWeight: 'bold',
-        fontSize: 30,
-        fontFamily: 'TTCommonsMedium',
-        color: 'white',
         backgroundColor: 'blue',
-        paddingTop: 50,
-        paddingLeft: 20,
-        height: '10%'
+        paddingLeft: 15,
+        height: '10%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop: "15%",
+    },
+    logo: {
+        width: 50,
+        height: 50,
+        resizeMode: 'contain',
     },
     item: {
-        paddingVertical: 30,
+        height: '10%',
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
         backgroundColor: 'white',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     activeCircle: {
         width: 10,
