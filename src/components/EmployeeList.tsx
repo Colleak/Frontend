@@ -141,29 +141,33 @@ class EmployeeList extends Component<EmployeeListProps> {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        width: '100%',
+        height: '50%',
+        paddingLeft: '2%',
     },
     searchInput: {
         height: 40,
         borderColor: 'gray',
         borderRadius: 30,
         paddingHorizontal: 10,
-        marginBottom: 10,
+        width: '98%',
+        paddingLeft: 15,
     },
     employeeList: {
-        height: '50%',
         width: '98%',
         backgroundColor: 'white',
-        marginTop: 5,
-        borderRadius: 30,
+        marginTop: 10,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
         overflow: 'hidden',
     },
     loadingContainer: {
-        height: '50%',
         width: '98%',
         backgroundColor: 'white',
+        marginTop: 10,
         paddingTop: "25%",
-        borderRadius: 30,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
         overflow: 'hidden',
     },
 });

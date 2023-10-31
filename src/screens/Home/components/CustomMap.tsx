@@ -1,11 +1,10 @@
-// CustomMap2.tsx
 import React, { useState } from 'react';
 import { Image, View, ScrollView, StyleSheet, LayoutChangeEvent } from 'react-native';
 
 interface CustomMap2Props {
     mapSource: any; // Source of the 1920x1080 map image
     markerSource: any; // Source of the marker image
-    markerCoords: { x: number; y: number }; // Coordinates for the marker
+    markerCoords: { x: number; y: number }; // Coordinates for the marker on a 1920 x 1080 image
 }
 
 const CustomMap: React.FC<CustomMap2Props> = ({ mapSource, markerSource, markerCoords }) => {
