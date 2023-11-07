@@ -19,29 +19,40 @@ interface EmployeeListItemProps {
     isFavorite: boolean;
     updateFavorites: (employeeId: string, isFavorite: boolean) => void;
     findRouter: () => void;
+    selectEmployee: (employeeId: string) => void;
+    isSelected: boolean;
+
 }
 
-const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, isFavorite, updateFavorites, findRouter, }) => {
+const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, isFavorite, updateFavorites,
+                                                               findRouter, selectEmployee, isSelected,}) => {
     const handlePress = () => {
         findRouter();
+        selectEmployee(employee.id);
     };
+
+    const containerStyle = isSelected ? styles.selectedContainer : styles.container;
+    const nameStyle = isSelected ? styles.selectedName : styles.name;
+    const buttonStyle = isSelected ? styles.selectedButton : styles.button;
+    const buttonText = isSelected ? styles.selectedButtonText : styles.buttonText;
+
     const handleFavoritePress = () => {
         updateFavorites(employee.id, !isFavorite);
     };
 
     return (
-        <TouchableOpacity style={styles.container} onPress={handlePress} onLongPress={handleFavoritePress}>
+        <TouchableOpacity style={containerStyle} onPress={handlePress} onLongPress={handleFavoritePress}>
             <View style={styles.nameWrapper}>
-                <Text style={styles.name}>{employee.name}</Text>
+                <Text style={nameStyle}>{employee.name}</Text>
                 <View style={styles.buttonRow}>
-                    <TouchableOpacity style={styles.button} onPress={employee.actions.ping}>
-                        <Text style={styles.buttonText}>Ping</Text>
+                    <TouchableOpacity style={buttonStyle} onPress={employee.actions.ping}>
+                        <Text style={buttonText}>Ping</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={employee.actions.call}>
-                        <Text style={styles.buttonText}>Call</Text>
+                    <TouchableOpacity style={buttonStyle} onPress={employee.actions.call}>
+                        <Text style={buttonText}>Call</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={employee.actions.message}>
-                        <Text style={styles.buttonText}>Message</Text>
+                    <TouchableOpacity style={buttonStyle} onPress={employee.actions.message}>
+                        <Text style={buttonText}>Message</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -57,7 +68,16 @@ const styles = StyleSheet.create({
         padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
-        marginTop: 8,
+        paddingTop: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    selectedContainer: {
+        backgroundColor: 'blue',
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+        paddingTop: 8,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
@@ -67,8 +87,18 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 20,
         marginBottom: 10,
+        marginTop: 5,
         fontFamily: 'TTCommonsMedium',
         color: 'blue',
+        letterSpacing: 2,
+        marginLeft: '1%',
+    },
+    selectedName: {
+        fontSize: 20,
+        marginBottom: 10,
+        marginTop: 5,
+        fontFamily: 'TTCommonsMedium',
+        color: 'white',
         letterSpacing: 2,
         marginLeft: '1%',
     },
@@ -84,8 +114,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginHorizontal: '1%',
     },
+    selectedButton: {
+        paddingHorizontal: 20,
+        paddingVertical: 5,
+        borderRadius: 100,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        marginHorizontal: '1%',
+    },
     buttonText: {
         color: 'white',
+        fontWeight: 'bold',
+        fontFamily: 'TTCommonsMedium',
+        fontSize: 20,
+    },
+    selectedButtonText: {
+        color: 'blue',
         fontWeight: 'bold',
         fontFamily: 'TTCommonsMedium',
         fontSize: 20,

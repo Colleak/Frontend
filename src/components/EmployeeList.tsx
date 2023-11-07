@@ -36,6 +36,7 @@ interface EmployeeListState {
     employees: Employee[] | null;
     searchTerm: string;
     favorites: string[];
+    selectedEmployeeId: string | null;
 }
 
 class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
@@ -43,7 +44,9 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         employees: null,
         searchTerm: '',
         favorites: [],
+        selectedEmployeeId: null,
     };
+
 
     componentDidMount() {
         getApp().then(employeeData => {
@@ -94,24 +97,10 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
     }
 
     locations: Location[] = [
-        {
-            "EHV-AP-04-02": {
-                "x": 400,
-                "y": 400
-            }
-        },
-        {
-            "EHV-AP-04-03": {
-                "x": 800,
-                "y": 400
-            }
-        },
-        {
-            "EHV-AP-04-04": {
-                "x": 400,
-                "y": 800
-            }
-        }];
+        {   "EHV-AP-04-02": { "x": 400, "y": 400}   },
+        {   "EHV-AP-04-03": { "x": 800, "y": 400}   },
+        {   "EHV-AP-04-04": { "x": 400, "y": 800}   },
+    ];
 
     findRouter = (filteredEmployees: {
         id: string;
@@ -135,6 +124,10 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         }
     }
 
+    selectEmployee = (employeeId: string) => {
+        this.setState({ selectedEmployeeId: employeeId });
+    };
+
     handleSearch = (text: string) => {
         this.setState({ searchTerm: text });
     };
@@ -156,19 +149,17 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
 
         // Sort employees so that favorites are at the top
         filteredEmployees.sort((a, b) => {
+            // Check if either employee is favorite
             const aIsFavorite = favorites.includes(a.id);
             const bIsFavorite = favorites.includes(b.id);
+            if (aIsFavorite && !bIsFavorite) return -1;
+            if (!aIsFavorite && bIsFavorite) return 1;
 
-            if (aIsFavorite && !bIsFavorite) {
-                return -1;
-            }
-            if (!aIsFavorite && bIsFavorite) {
-                return 1;
-            }
-            return 0; // if both are favorites or both are not, maintain original order
+            // If both are favorites or both are not, then sort alphabetically by full name
+            return a.name.localeCompare(b.name);
         });
 
-        // If there is only one employee after filtering, find and update the router location
+        // If there is only one employee after filtering, find and update router location
         if (filteredEmployees.length === 1) {
             this.findRouter(filteredEmployees);
         }
@@ -190,6 +181,9 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
                             isFavorite={favorites.includes(employee.id)}
                             updateFavorites={this.updateFavorites}
                             findRouter={() => this.findRouter([employee])} //click to show location functionality
+                            selectEmployee={this.selectEmployee}
+                            isSelected={this.state.selectedEmployeeId === employee.id}
+
                         />
                     ))}
                 </ScrollView>
