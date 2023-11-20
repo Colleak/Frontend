@@ -4,6 +4,11 @@ import NavBar from "../../components/NavBar";
 import SideBar from "../../components/SideBar";
 import SettingsSwitch from "./components/SettingsSwitch";
 import CategoryHeader from "./components/CategoryHeader";
+import LoginButton from "../../components/LoginButton";
+import LogoutButton from "../../components/LogoutButton";
+import UserProfile from "../../components/UserProfile";
+
+
 
 type SettingsScreenProps = {
     navigation: any;
@@ -27,6 +32,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigation }) => {
                 label="Location Permission"
                 onToggle={handlePermissionToggle}
             />
+            <LoginButton/>
+            <LogoutButton/>
+            <UserProfile/>
         </View>
     );
 };
