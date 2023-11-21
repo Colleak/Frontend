@@ -6,6 +6,7 @@ import RootNavigator from './src/navigation/RootNavigator';
 import 'react-native-gesture-handler';
 import { StatusBar } from 'react-native';
 import LoadingComponent from "./src/components/LoadingComponents";
+import {useAuth0, Auth0Provider} from 'react-native-auth0';
 
 export default function App() {
     const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -26,13 +27,16 @@ export default function App() {
         return <LoadingComponent/>;
     }
 
+
     return (
-        <>
-            <StatusBar barStyle="dark-content"/>
-            <NavigationContainer>
-                <RootNavigator/>
-            </NavigationContainer>
-        </>
+        <Auth0Provider domain={"dev-lohb1xoklmc7vqfg.us.auth0.com"} clientId={"1DEAvHt6GnbL0VApHfpYZgbuVAu0VqdC"}>
+            <>
+                <StatusBar barStyle="dark-content"/>
+                <NavigationContainer>
+                    <RootNavigator/>
+                </NavigationContainer>
+            </>
+        </Auth0Provider>
     );
 }
 
