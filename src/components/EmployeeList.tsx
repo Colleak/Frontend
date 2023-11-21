@@ -5,6 +5,7 @@ import {
     TextInput,
     StyleSheet,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import EmployeeListItem from "./EmployeeListItem";
 import getApp from "../data/ApiAccess";
 import LoadingComponent from "./LoadingComponents";
@@ -16,24 +17,34 @@ interface Location {
     };
 }
 
+interface Employee {
+    id: string;
+    name: string;
+    router: string;
+    actions: {
+        ping: () => void;
+        call: () => void;
+        message: () => void;
+    };
+}
+
 interface EmployeeListProps {
     updateMarkerCoords: (coords: { x: number; y: number }) => void;
-  }
+}
 
-class EmployeeList extends Component<EmployeeListProps> {
-    state = {
-        employees: [] as {
-            id: string;
-            name: string;
-            router: string;
-            actions: {
-                ping: () => void;
-                call: () => void;
-                message: () => void;
-            };
-        }[] | null,
+interface EmployeeListState {
+    employees: Employee[] | null;
+    searchTerm: string;
+    favorites: string[];
+    selectedEmployeeId: string | null;
+}
+
+class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
+    state: EmployeeListState = {
+        employees: null,
         searchTerm: '',
-        previousLocation: null,
+        favorites: [],
+        selectedEmployeeId: null,
     };
 
 
@@ -55,27 +66,41 @@ class EmployeeList extends Component<EmployeeListProps> {
                 console.error("Failed to fetch employee data:", employeeData);
             }
         });
+        this.fetchFavorites(); // Fetch favorites from AsyncStorage
+    }
+
+    fetchFavorites = async () => {
+        try {
+            const favorites = await AsyncStorage.getItem('favorites');
+            this.setState({ favorites: favorites ? favorites.split(',') : [] });
+        } catch (error) {
+            console.error("Failed to fetch favorites:", error);
+        }
+    }
+
+    updateFavorites = async (employeeId: string, isFavorite: boolean) => {
+        try {
+            let { favorites } = this.state;
+            const index = favorites.indexOf(employeeId);
+
+            if (isFavorite && index === -1) {
+                favorites.push(employeeId);
+            } else if (!isFavorite && index !== -1) {
+                favorites.splice(index, 1);
+            }
+
+            await AsyncStorage.setItem('favorites', favorites.join(','));
+            this.setState({ favorites });
+        } catch (error) {
+            console.error("Failed to update favorites:", error);
+        }
     }
 
     locations: Location[] = [
-        {
-            "EHV-AP-04-02": {
-                "x": 400,
-                "y": 400
-            }
-        },
-        {
-            "EHV-AP-04-03": {
-                "x": 800,
-                "y": 400
-            }
-        },
-        {
-            "EHV-AP-04-04": {
-                "x": 400,
-                "y": 800
-            }
-        }];
+        {   "EHV-AP-04-02": { "x": 400, "y": 400}   },
+        {   "EHV-AP-04-03": { "x": 800, "y": 400}   },
+        {   "EHV-AP-04-04": { "x": 400, "y": 800}   },
+    ];
 
     findRouter = (filteredEmployees: {
         id: string;
@@ -99,12 +124,16 @@ class EmployeeList extends Component<EmployeeListProps> {
         }
     }
 
+    selectEmployee = (employeeId: string) => {
+        this.setState({ selectedEmployeeId: employeeId });
+    };
+
     handleSearch = (text: string) => {
         this.setState({ searchTerm: text });
     };
 
     render() {
-        const { employees, searchTerm } = this.state;
+        const { employees, searchTerm, favorites } = this.state;
 
         if (!employees) {
             return (
@@ -114,11 +143,26 @@ class EmployeeList extends Component<EmployeeListProps> {
             );
         }
 
-        const filteredEmployees = employees.filter((employee) =>
+        let filteredEmployees = employees.filter((employee) =>
             employee.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-        this.findRouter(filteredEmployees);
+        // Sort employees so that favorites are at the top
+        filteredEmployees.sort((a, b) => {
+            // Check if either employee is favorite
+            const aIsFavorite = favorites.includes(a.id);
+            const bIsFavorite = favorites.includes(b.id);
+            if (aIsFavorite && !bIsFavorite) return -1;
+            if (!aIsFavorite && bIsFavorite) return 1;
+
+            // If both are favorites or both are not, then sort alphabetically by full name
+            return a.name.localeCompare(b.name);
+        });
+
+        // If there is only one employee after filtering, find and update router location
+        if (filteredEmployees.length === 1) {
+            this.findRouter(filteredEmployees);
+        }
 
         return (
             <View style={styles.container}>
@@ -131,7 +175,16 @@ class EmployeeList extends Component<EmployeeListProps> {
 
                 <ScrollView style={styles.employeeList}>
                     {filteredEmployees.map((employee) => (
-                        <EmployeeListItem key={employee.id} employee={employee} />
+                        <EmployeeListItem
+                            key={employee.id}
+                            employee={employee}
+                            isFavorite={favorites.includes(employee.id)}
+                            updateFavorites={this.updateFavorites}
+                            findRouter={() => this.findRouter([employee])} //click to show location functionality
+                            selectEmployee={this.selectEmployee}
+                            isSelected={this.state.selectedEmployeeId === employee.id}
+
+                        />
                     ))}
                 </ScrollView>
             </View>
