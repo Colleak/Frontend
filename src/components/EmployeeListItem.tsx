@@ -1,34 +1,60 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-interface EmployeeActions {
-    ping: () => void;
-    call: () => void;
-    message: () => void;
-}
-
-interface Employee {
-    id: string;
-    name: string;
-    actions: EmployeeActions;
-}
+import Employee from "../models/user/Employees";
+import AppData from "../../AppData.json"
 
 interface EmployeeListItemProps {
     employee: Employee;
+    currentUserId: string;
     isFavorite: boolean;
     updateFavorites: (employeeId: string, isFavorite: boolean) => void;
     findRouter: () => void;
     selectEmployee: (employeeId: string) => void;
     isSelected: boolean;
-
 }
 
-const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, isFavorite, updateFavorites,
-                                                               findRouter, selectEmployee, isSelected,}) => {
+const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUserId, isFavorite, updateFavorites, findRouter, selectEmployee, isSelected}) => {
     const handlePress = () => {
         findRouter();
         selectEmployee(employee.id);
+    };
+    const apiRequest = async (endpoint: string, method: string, data: object): Promise<any> => {
+        const url = `${AppData.serverAddress}${endpoint}`;
+        const requestBody = JSON.stringify(data);
+
+        // Log the URL and the request body
+        console.log(`Sending request to URL: ${url}`);
+        console.log(`Request body: ${requestBody}`);
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: requestBody,
+            });
+
+            const responseJson = await response.json();
+            console.log(`Response from ${url}:`, responseJson); // Log the response
+            return responseJson;
+        } catch (error) {
+            console.error('API request failed:', error);
+            throw error;
+        }
+    };
+
+    const pingUser = (currentUserId: string, targetUserId: string): Promise<void> => {
+        return apiRequest('Office/sendping', 'POST', { sender_id: currentUserId, receiver_id: targetUserId });
+    };
+
+    const callUser = (currentUserId: string, targetUserId: string): Promise<void> => {
+        return apiRequest('Office/sendcall', 'POST', { sender_id: currentUserId, receiver_id: targetUserId });
+    };
+
+    const messageUser = (currentUserId: string, targetUserId: string, message: string): Promise<void> => {
+        return apiRequest('Office/sendmessage', 'POST', { sender_id: currentUserId, receiver_id: targetUserId, message: message });
     };
 
     const containerStyle = isSelected ? styles.selectedContainer : styles.container;
@@ -43,15 +69,15 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, isFavorit
     return (
         <TouchableOpacity style={containerStyle} onPress={handlePress} onLongPress={handleFavoritePress}>
             <View style={styles.nameWrapper}>
-                <Text style={nameStyle}>{employee.name}</Text>
+                <Text style={nameStyle}>{employee.employeeName}</Text>
                 <View style={styles.buttonRow}>
-                    <TouchableOpacity style={buttonStyle} onPress={employee.actions.ping}>
+                    <TouchableOpacity style={buttonStyle} onPress={() => pingUser(currentUserId, employee.id)}>
                         <Text style={buttonText}>Ping</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={buttonStyle} onPress={employee.actions.call}>
+                    <TouchableOpacity style={buttonStyle} onPress={() => callUser(currentUserId, employee.id)}>
                         <Text style={buttonText}>Call</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={buttonStyle} onPress={employee.actions.message}>
+                    <TouchableOpacity style={buttonStyle} onPress={() => messageUser(currentUserId, employee.id, "Test message")}>
                         <Text style={buttonText}>Message</Text>
                     </TouchableOpacity>
                 </View>

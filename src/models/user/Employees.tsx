@@ -1,5 +1,5 @@
 export default interface Employee {
-    id: number;
+    id: string;
     employeeName: string;
-    connectedRouterName : string;
+    connectedRouterName: string;
 }
