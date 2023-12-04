@@ -1,30 +1,15 @@
 import React, { Component } from 'react';
-import {
-    View,
-    ScrollView,
-    TextInput,
-    StyleSheet,
-} from 'react-native';
+import { View, ScrollView, TextInput, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EmployeeListItem from "./EmployeeListItem";
 import getApp from "../data/ApiAccess";
 import LoadingComponent from "./LoadingComponents";
+import Employee from "../models/user/Employees";
 
 interface Location {
     [key: string]: {
         x: number;
         y: number;
-    };
-}
-
-interface Employee {
-    id: string;
-    name: string;
-    router: string;
-    actions: {
-        ping: () => void;
-        call: () => void;
-        message: () => void;
     };
 }
 
@@ -47,21 +32,10 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         selectedEmployeeId: null,
     };
 
-
     componentDidMount() {
         getApp().then(employeeData => {
             if (Array.isArray(employeeData)) {
-                const transformedData = employeeData.map(employee => ({
-                    id: employee.id.toString(),
-                    name: employee.employeeName,
-                    router: employee.connectedRouterName,
-                    actions: {
-                        ping: () => console.log('Ping', employee.employeeName),
-                        call: () => console.log('Call', employee.employeeName),
-                        message: () => console.log('Message', employee.employeeName),
-                    }
-                }));
-                this.setState({ employees: transformedData });
+                this.setState({ employees: employeeData });
             } else {
                 console.error("Failed to fetch employee data:", employeeData);
             }
@@ -97,30 +71,16 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
     }
 
     locations: Location[] = [
-        {   "EHV-AP-04-02": { "x": 400, "y": 400}   },
-        {   "EHV-AP-04-03": { "x": 800, "y": 400}   },
-        {   "EHV-AP-04-04": { "x": 400, "y": 800}   },
+        { "EHV-AP-04-02": { "x": 400, "y": 400 } },
+        { "EHV-AP-04-03": { "x": 800, "y": 400 } },
+        { "EHV-AP-04-04": { "x": 400, "y": 800 } },
     ];
 
-    findRouter = (filteredEmployees: {
-        id: string;
-        name: string;
-        router: string;
-        actions: {
-            ping: () => void;
-            call: () => void;
-            message: () => void;
-        };
-    }[]) => {
-        console.log(filteredEmployees);   
-
-        if (filteredEmployees.length === 1) {
-            const employee = filteredEmployees[0];
-            const location = this.locations.find(loc => loc[employee.router]);
-            if (location) {
-                const coordinates = location[employee.router];
-                this.props.updateMarkerCoords(coordinates);
-            }
+    findRouter = (employee: Employee) => {
+        const location = this.locations.find(loc => loc[employee.connectedRouterName]);
+        if (location) {
+            const coordinates = location[employee.connectedRouterName];
+            this.props.updateMarkerCoords(coordinates);
         }
     }
 
@@ -144,25 +104,17 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         }
 
         let filteredEmployees = employees.filter((employee) =>
-            employee.name.toLowerCase().includes(searchTerm.toLowerCase())
+            employee.employeeName && employee.employeeName.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
         // Sort employees so that favorites are at the top
         filteredEmployees.sort((a, b) => {
-            // Check if either employee is favorite
             const aIsFavorite = favorites.includes(a.id);
             const bIsFavorite = favorites.includes(b.id);
             if (aIsFavorite && !bIsFavorite) return -1;
             if (!aIsFavorite && bIsFavorite) return 1;
-
-            // If both are favorites or both are not, then sort alphabetically by full name
-            return a.name.localeCompare(b.name);
+            return a.employeeName.localeCompare(b.employeeName);
         });
-
-        // If there is only one employee after filtering, find and update router location
-        if (filteredEmployees.length === 1) {
-            this.findRouter(filteredEmployees);
-        }
 
         return (
             <View style={styles.container}>
@@ -178,12 +130,12 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
                         <EmployeeListItem
                             key={employee.id}
                             employee={employee}
+                            currentUserId={'652551bdb82d091daccff161'} //temporary, change to async value later
                             isFavorite={favorites.includes(employee.id)}
                             updateFavorites={this.updateFavorites}
-                            findRouter={() => this.findRouter([employee])} //click to show location functionality
+                            findRouter={() => this.findRouter(employee)} //click to show location functionality
                             selectEmployee={this.selectEmployee}
                             isSelected={this.state.selectedEmployeeId === employee.id}
-
                         />
                     ))}
                 </ScrollView>
