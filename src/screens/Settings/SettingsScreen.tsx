@@ -7,6 +7,7 @@ import CategoryHeader from "./components/CategoryHeader";
 import LoginButton from "../../components/LoginButton";
 import LogoutButton from "../../components/LogoutButton";
 import UserProfile from "../../components/UserProfile";
+import StatusButton from "../../components/StatusButton";
 
 
 
@@ -35,6 +36,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigation }) => {
             <LoginButton/>
             <LogoutButton/>
             <UserProfile/>
+            <StatusButton/>
         </View>
     );
 };

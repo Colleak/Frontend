@@ -1,3 +1,4 @@
 {
-    "serverAddress": "https://colleak-back-end.azurewebsites.net/api/Employees"
+    "serverAddress": "https://colleak-back-end.azurewebsites.net/api/Employees",
+    "mockAddress": "http://127.0.0.1:8001"
 }
