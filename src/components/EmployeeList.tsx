@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
-import {
-    View,
-    ScrollView,
-    TextInput,
-    StyleSheet,
-} from 'react-native';
+import { View, ScrollView, TextInput, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import EmployeeListItem from "./EmployeeListItem";
 import getApp from "../data/ApiAccess";
 import LoadingComponent from "./LoadingComponents";
+import Employee from "../models/user/Employees";
 
 interface Location {
     [key: string]: {
@@ -18,93 +15,85 @@ interface Location {
 
 interface EmployeeListProps {
     updateMarkerCoords: (coords: { x: number; y: number }) => void;
-  }
+}
 
-class EmployeeList extends Component<EmployeeListProps> {
-    state = {
-        employees: [] as {
-            id: string;
-            name: string;
-            router: string;
-            actions: {
-                ping: () => void;
-                call: () => void;
-                message: () => void;
-            };
-        }[] | null,
+interface EmployeeListState {
+    employees: Employee[] | null;
+    searchTerm: string;
+    favorites: string[];
+    selectedEmployeeId: string | null;
+}
+
+class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
+    state: EmployeeListState = {
+        employees: null,
         searchTerm: '',
-        previousLocation: null,
+        favorites: [],
+        selectedEmployeeId: null,
     };
-
 
     componentDidMount() {
         getApp().then(employeeData => {
             if (Array.isArray(employeeData)) {
-                const transformedData = employeeData.map(employee => ({
-                    id: employee.id.toString(),
-                    name: employee.employeeName,
-                    router: employee.connectedRouterName,
-                    actions: {
-                        ping: () => console.log('Ping', employee.employeeName),
-                        call: () => console.log('Call', employee.employeeName),
-                        message: () => console.log('Message', employee.employeeName),
-                    }
-                }));
-                this.setState({ employees: transformedData });
+                this.setState({ employees: employeeData });
             } else {
                 console.error("Failed to fetch employee data:", employeeData);
             }
         });
+        this.fetchFavorites(); // Fetch favorites from AsyncStorage
+    }
+
+    fetchFavorites = async () => {
+        try {
+            const favorites = await AsyncStorage.getItem('favorites');
+            this.setState({ favorites: favorites ? favorites.split(',') : [] });
+        } catch (error) {
+            console.error("Failed to fetch favorites:", error);
+        }
+    }
+
+    updateFavorites = async (employeeId: string, isFavorite: boolean) => {
+        try {
+            let { favorites } = this.state;
+            const index = favorites.indexOf(employeeId);
+
+            if (isFavorite && index === -1) {
+                favorites.push(employeeId);
+            } else if (!isFavorite && index !== -1) {
+                favorites.splice(index, 1);
+            }
+
+            await AsyncStorage.setItem('favorites', favorites.join(','));
+            this.setState({ favorites });
+        } catch (error) {
+            console.error("Failed to update favorites:", error);
+        }
     }
 
     locations: Location[] = [
-        {
-            "EHV-AP-04-02": {
-                "x": 400,
-                "y": 400
-            }
-        },
-        {
-            "EHV-AP-04-03": {
-                "x": 800,
-                "y": 400
-            }
-        },
-        {
-            "EHV-AP-04-04": {
-                "x": 400,
-                "y": 800
-            }
-        }];
+        { "EHV-AP-04-02": { "x": 400, "y": 400 } },
+        { "EHV-AP-04-03": { "x": 800, "y": 400 } },
+        { "EHV-AP-04-04": { "x": 400, "y": 800 } },
+    ];
 
-    findRouter = (filteredEmployees: {
-        id: string;
-        name: string;
-        router: string;
-        actions: {
-            ping: () => void;
-            call: () => void;
-            message: () => void;
-        };
-    }[]) => {
-        console.log(filteredEmployees);   
-
-        if (filteredEmployees.length === 1) {
-            const employee = filteredEmployees[0];
-            const location = this.locations.find(loc => loc[employee.router]);
-            if (location) {
-                const coordinates = location[employee.router];
-                this.props.updateMarkerCoords(coordinates);
-            }
+    findRouter = (employee: Employee) => {
+        const location = this.locations.find(loc => loc[employee.connectedRouterName]);
+        if (location) {
+            const coordinates = location[employee.connectedRouterName];
+            this.props.updateMarkerCoords(coordinates);
         }
     }
+
+    selectEmployee = (employeeId: string) => {
+        this.setState({ selectedEmployeeId: employeeId });
+    };
 
     handleSearch = (text: string) => {
         this.setState({ searchTerm: text });
     };
 
     render() {
-        const { employees, searchTerm } = this.state;
+        const { employees, searchTerm, favorites } = this.state;
 
         if (!employees) {
             return (
@@ -114,11 +103,18 @@ class EmployeeList extends Component<EmployeeListProps> {
             );
         }
 
-        const filteredEmployees = employees.filter((employee) =>
-            employee.name.toLowerCase().includes(searchTerm.toLowerCase())
+        let filteredEmployees = employees.filter((employee) =>
+            employee.employeeName && employee.employeeName.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-        this.findRouter(filteredEmployees);
+        // Sort employees so that favorites are at the top
+        filteredEmployees.sort((a, b) => {
+            const aIsFavorite = favorites.includes(a.id);
+            const bIsFavorite = favorites.includes(b.id);
+            if (aIsFavorite && !bIsFavorite) return -1;
+            if (!aIsFavorite && bIsFavorite) return 1;
+            return a.employeeName.localeCompare(b.employeeName);
+        });
 
         return (
             <View style={styles.container}>
@@ -131,7 +127,16 @@ class EmployeeList extends Component<EmployeeListProps> {
 
                 <ScrollView style={styles.employeeList}>
                     {filteredEmployees.map((employee) => (
-                        <EmployeeListItem key={employee.id} employee={employee} />
+                        <EmployeeListItem
+                            key={employee.id}
+                            employee={employee}
+                            currentUserId={'652551bdb82d091daccff161'} //temporary, change to async value later
+                            isFavorite={favorites.includes(employee.id)}
+                            updateFavorites={this.updateFavorites}
+                            findRouter={() => this.findRouter(employee)} //click to show location functionality
+                            selectEmployee={this.selectEmployee}
+                            isSelected={this.state.selectedEmployeeId === employee.id}
+                        />
                     ))}
                 </ScrollView>
             </View>
