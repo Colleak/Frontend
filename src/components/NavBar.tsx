@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image , Platform} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 type NavBarProps = {
     onHamburgerPress?: () => void;
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         height: '10%',
         paddingHorizontal: 15,
-        paddingTop: Platform.OS === 'ios' ? '10%' : 0,  // Conditional padding top
+        paddingTop: "10%",
         elevation: 3, // for shadow on Android
         shadowColor: '#000', // for shadow on iOS
         shadowOffset: { width: 0, height: 2 },
