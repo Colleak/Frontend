@@ -34,7 +34,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 <FloorText floor={"floor 1"}/>
                 <CustomMap
                     mapSource={require("../../assets/images/colleak2dfloorplan.png")}
-                    markerSource={require("../../assets/images/man.png")}
+                    markerSource={require("../../assets/images/wifi-signal-marker.png")}
                     markerCoords={markerCoords}
                 />
             </View>
