@@ -6,37 +6,52 @@ import EmployeeList from "../../components/EmployeeList";
 import NavBar from "../../components/NavBar";
 import SideBar from "../../components/SideBar";
 import { useLocationPermission } from "../../hooks";
+import * as Network from 'expo-network';
 
 type HomeScreenProps = {
     navigation: any;
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-        const [markerCoords, setMarkerCoords] = useState({ x: 0, y: 830 });
-        const [sidebarVisible, setSidebarVisible] = useState(false);
+    const [markerCoords, setMarkerCoords] = useState({ x: 0, y: 830 });
+    const [sidebarVisible, setSidebarVisible] = useState(false);
     const permissionForLocation = useLocationPermission();
     const [userLoaded, setUserLoaded] = useState(false);
+    const [ipAddress, setIpAddress] = useState<string | null>(null);
 
-        const toggleSidebar = () => {
+    const toggleSidebar = () => {
         setSidebarVisible(!sidebarVisible);
     };
+
     const updateMarkerCoords = useCallback((newCoords: { x: number; y: number }) => {
         if (newCoords.x !== markerCoords.x || newCoords.y !== markerCoords.y) {
             setMarkerCoords(newCoords);
         }
     }, [markerCoords, setMarkerCoords]);
+
+   useEffect(() => {
+    const fetchIpAddress = async () => {
+        const ip = await Network.getIpAddressAsync();
+        console.log(ip); // Log the IP address to the console
+        setIpAddress(ip);
+    };
+
+    fetchIpAddress();
+}, []);
+
     return (
         <View style={styles.container}>
             <NavBar onHamburgerPress={toggleSidebar}
                     logoSource={require("../../assets/images/ioLogoBlue.png")}/>
             {sidebarVisible && <SideBar navigation={navigation} onClose={toggleSidebar} currentScreen={"Home"} />}
             <View style={styles.mapContainer}>
-                <FloorText floor={"floor 1"}/>
+                <FloorText floor={"floor 1"} />
                 <CustomMap
                     mapSource={require("../../assets/images/colleak2dfloorplan.png")}
                     markerSource={require("../../assets/images/wifi-signal-marker.png")}
                     markerCoords={markerCoords}
                 />
+                <Text>{ipAddress}</Text>
             </View>
             <EmployeeList updateMarkerCoords={updateMarkerCoords}/>
         </View>
