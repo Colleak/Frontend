@@ -22,6 +22,7 @@ interface EmployeeListState {
     searchTerm: string;
     favorites: string[];
     selectedEmployeeId: string | null;
+    isOnLocation: boolean;
 }
 
 class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
@@ -30,6 +31,7 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         searchTerm: '',
         favorites: [],
         selectedEmployeeId: null,
+        isOnLocation: true,
     };
 
     componentDidMount() {
@@ -80,7 +82,9 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         const location = this.locations.find(loc => loc[employee.connectedRouterName]);
         if (location) {
             const coordinates = location[employee.connectedRouterName];
-            this.props.updateMarkerCoords(coordinates);
+            if (this.state.isOnLocation) {
+                this.props.updateMarkerCoords(coordinates);
+            }
         }
     }
 
