@@ -13,6 +13,7 @@ interface EmployeeListItemProps {
   findRouter: () => void;
   selectEmployee: (employeeId: string) => void;
   isSelected: boolean;
+  setMarkerVisibility: (isVisible: boolean) => void;
 }
 
 const EmployeeListItem: React.FC<EmployeeListItemProps> = ({
@@ -23,12 +24,15 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({
   findRouter,
   selectEmployee,
   isSelected,
+  setMarkerVisibility,
 }) => {
   const [statusColor, setStatusColor] = useState('');
+  const [isAvailableBool, setIsAvailableBool] = useState(false);
 
   const handlePress = () => {
     findRouter();
     selectEmployee(employee.id);
+    setMarkerVisibility(isAvailableBool);
   };
 
   useEffect(() => {
@@ -39,15 +43,17 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({
           sender_id: currentUserId,
           receiver_id: employee.id,
           receiver_name: employee.employeeName,
-          request_time: 10
+          request_time: 13
         });
 
         console.log('Status Result EQUALS ', statusResult);
 
-        if (JSON.stringify(statusResult).includes('currently available')) {
+        if (!JSON.stringify(statusResult).includes('not')) {
           setStatusColor('green');
-        } else if (JSON.stringify(statusResult).includes('not available')) {
+          setIsAvailableBool(true);
+        } else if (JSON.stringify(statusResult).includes('not')) {
           setStatusColor('red');
+          setIsAvailableBool(false);
         } else {
           setStatusColor('black');
         }

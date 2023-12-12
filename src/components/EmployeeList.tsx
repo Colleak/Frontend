@@ -84,13 +84,14 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         if (location) {
             const coordinates = location[employee.connectedRouterName];
             if (this.state.isOnLocation) {
-                this.props.setIsMarkerVisible(true);
                 this.props.updateMarkerCoords(coordinates);
-            } else {
-                this.props.setIsMarkerVisible(false);
             }
         }
     }
+
+    setMarkerVisibility = (isVisible: boolean) => {
+        this.props.setIsMarkerVisible(isVisible);
+    };
 
     selectEmployee = (employeeId: string) => {
         this.setState({ selectedEmployeeId: employeeId });
@@ -144,6 +145,7 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
                             findRouter={() => this.findRouter(employee)} //click to show location functionality
                             selectEmployee={this.selectEmployee}
                             isSelected={this.state.selectedEmployeeId === employee.id}
+                            setMarkerVisibility={this.setMarkerVisibility}
                         />
                     ))}
                 </ScrollView>
