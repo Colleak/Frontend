@@ -36,7 +36,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 <FloorText floor={"floor 1"}/>
                 <CustomMap
                     mapSource={require("../../assets/images/colleak2dfloorplan.png")}
-                    markerSource={require("../../assets/images/wifi-signal-marker.png")}
+                    markerSource={require("../../assets/images/man.png")}
                     markerCoords={markerCoords}
                     isMarkerVisible={isMarkerVisible}
                 />
