@@ -3,6 +3,7 @@ import React, {useState, useEffect, useCallback} from "react";
 import NavBar from "../../components/NavBar";
 import SideBar from "../../components/SideBar";
 import Calendar from "./Components/Calendar";
+
 type MeetingScreenProps = {
     navigation: any;
 }

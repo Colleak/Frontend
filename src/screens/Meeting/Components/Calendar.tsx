@@ -34,23 +34,27 @@ const Calendar: React.FC = () => {
         }
     };
 
-        const [lastSelectedEmployee, setLastSelectedEmployee] = useState(string<('')>);
+        const [lastSelectedEmployee, setLastSelectedEmployee] = useState<string>('');
         
-    useEffect(() => {
-        // Function to fetch the last selected employee from AsyncStorage
-        const fetchLastSelectedEmployee = async () => {
-            try {
-                const savedEmployeeName = await AsyncStorage.getItem('lastSelectedEmployee');
-                if (savedEmployeeName !== null) {
-                    setLastSelectedEmployee(savedEmployeeName);
-                }
-            } catch (error) {
-                console.error('Failed to fetch from AsyncStorage:', error);
+    const [meetings, setMeetings] = useState(Array(24).fill(false));
+
+useEffect(() => {
+    // Function to fetch the last selected employee from AsyncStorage
+    const fetchLastSelectedEmployee = async () => {
+        try {
+            const savedEmployeeName = await AsyncStorage.getItem('lastSelectedEmployee');
+            if (savedEmployeeName !== null) {
+                setLastSelectedEmployee(savedEmployeeName);
             }
-        };
+        } catch (error) {
+            console.error('Failed to fetch from AsyncStorage:', error);
+        }
+    };
 
-        fetchLastSelectedEmployee();
+    fetchLastSelectedEmployee();
+}, []);
 
+useEffect(() => {
     async function getArray() {
         try {
             let response = await apiRequest('Office/available', 'POST', { sender_id: currentUserId, receiver_id: targetUserId, message });
@@ -63,18 +67,16 @@ const Calendar: React.FC = () => {
         }
     }
 
-    const [meetings, setMeetings] = useState(Array(24).fill(false));
-    useEffect(() => {
-        getArray().then(endpointData => {
-            const updatedMeetings = Array(24).fill(false);
-            endpointData.forEach(index => {
-                if (index < updatedMeetings.length) {
-                    updatedMeetings[index] = true;
-                }
-            });
-            setMeetings(updatedMeetings); // Update de state
+    getArray().then(endpointData => {
+        const updatedMeetings = Array(24).fill(false);
+        endpointData.forEach((index: number) => {
+            if (index < updatedMeetings.length) {
+                updatedMeetings[index] = true;
+            }
         });
-    }, []);
+        setMeetings(updatedMeetings); // Update de state
+    });
+}, []);
 
 
     return (
@@ -101,6 +103,12 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         overflow: 'hidden',
+    },
+    employeeNameView: {
+        // Add your desired styling here
+    },
+    employeeNameText: {
+        // Add your desired styling here
     },
     hour: {
         backgroundColor: 'white',
