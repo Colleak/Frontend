@@ -5,9 +5,10 @@ interface CustomMap2Props {
     mapSource: any; // Source of the 1920x1080 map image
     markerSource: any; // Source of the marker image
     markerCoords: { x: number; y: number }; // Coordinates for the marker on a 1920 x 1080 image
+    isMarkerVisible: boolean;
 }
 
-const CustomMap: React.FC<CustomMap2Props> = ({ mapSource, markerSource, markerCoords }) => {
+const CustomMap: React.FC<CustomMap2Props> = ({ mapSource, markerSource, markerCoords, isMarkerVisible }) => {
     const [scaleFactor, setScaleFactor] = useState(1);
     const onLayout = (event: LayoutChangeEvent) => {
         const containerHeight = event.nativeEvent.layout.height;
@@ -18,19 +19,21 @@ const CustomMap: React.FC<CustomMap2Props> = ({ mapSource, markerSource, markerC
     return (
         <ScrollView horizontal style={styles.container} onLayout={onLayout}>
             <Image source={mapSource} style={styles.mapImage} resizeMode="contain" />
-            <View
-                style={[
-                    styles.markerContainer,
-                    {
-                        left: markerCoords.x * scaleFactor,
-                        top: markerCoords.y * scaleFactor,
-                        width: 250 * scaleFactor,
-                        height: 250 * scaleFactor,
-                    },
-                ]}
-            >
-                <Image source={markerSource} style={styles.markerImage} resizeMode="contain" />
-            </View>
+            {isMarkerVisible && (
+                <View
+                    style={[
+                        styles.markerContainer,
+                        {
+                            left: markerCoords.x * scaleFactor,
+                            top: markerCoords.y * scaleFactor,
+                            width: 250 * scaleFactor,
+                            height: 250 * scaleFactor,
+                        },
+                    ]}
+                >
+                    <Image source={markerSource} style={styles.markerImage} resizeMode="contain" />
+                </View>
+            )}
         </ScrollView>
     );
 };

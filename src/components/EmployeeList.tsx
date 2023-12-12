@@ -15,6 +15,7 @@ interface Location {
 
 interface EmployeeListProps {
     updateMarkerCoords: (coords: { x: number; y: number }) => void;
+    setIsMarkerVisible: (isVisible: boolean) => void
 }
 
 interface EmployeeListState {
@@ -83,7 +84,10 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         if (location) {
             const coordinates = location[employee.connectedRouterName];
             if (this.state.isOnLocation) {
+                this.props.setIsMarkerVisible(true);
                 this.props.updateMarkerCoords(coordinates);
+            } else {
+                this.props.setIsMarkerVisible(false);
             }
         }
     }
