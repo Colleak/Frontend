@@ -1,0 +1,134 @@
+
+import {  View, ScrollView, StyleSheet,   Text} from 'react-native';
+import React, { useEffect, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppData from "../../../../AppData.json"
+const Calendar: React.FC = () => {
+    const currentUserId = "652551bdb82d091daccff161";
+    const targetUserId = "652551bdb82d091daccff161";
+    const message = "Hello world";
+
+
+    const apiRequest = async (endpoint: string, method: string, data: object): Promise<any> => {
+        const url = `${AppData.serverAddress}${endpoint}`;
+        const requestBody = JSON.stringify(data);
+        // Log the URL and the request body
+        console.log(`Sending request to URL: ${url}`);
+        console.log(`Request body: ${requestBody}`);
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: requestBody,
+            });
+
+            const responseJson = await response.json();
+            console.log(`Response from ${url}:`, responseJson); // Log the response
+            return responseJson;
+        } catch (error) {
+            console.error('API request failed:', error);
+            throw error;
+        }
+    };
+
+        const [lastSelectedEmployee, setLastSelectedEmployee] = useState(string<('')>);
+        
+    useEffect(() => {
+        // Function to fetch the last selected employee from AsyncStorage
+        const fetchLastSelectedEmployee = async () => {
+            try {
+                const savedEmployeeName = await AsyncStorage.getItem('lastSelectedEmployee');
+                if (savedEmployeeName !== null) {
+                    setLastSelectedEmployee(savedEmployeeName);
+                }
+            } catch (error) {
+                console.error('Failed to fetch from AsyncStorage:', error);
+            }
+        };
+
+        fetchLastSelectedEmployee();
+
+    async function getArray() {
+        try {
+            let response = await apiRequest('Office/available', 'POST', { sender_id: currentUserId, receiver_id: targetUserId, message });
+            let AvailableArray = response.AvailableArray;
+            console.log(AvailableArray);
+            return AvailableArray;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    const [meetings, setMeetings] = useState(Array(24).fill(false));
+    useEffect(() => {
+        getArray().then(endpointData => {
+            const updatedMeetings = Array(24).fill(false);
+            endpointData.forEach(index => {
+                if (index < updatedMeetings.length) {
+                    updatedMeetings[index] = true;
+                }
+            });
+            setMeetings(updatedMeetings); // Update de state
+        });
+    }, []);
+
+
+    return (
+        <ScrollView style={styles.scrollView}>
+            {lastSelectedEmployee ? (
+                <View style={styles.employeeNameView}>
+                    <Text style={styles.employeeNameText}>Last Selected Employee: {lastSelectedEmployee}</Text>
+                </View>
+            ) : null}
+            {meetings.map((isMeeting, index) => (
+                <View key={index} style={isMeeting ? styles.activeHour : styles.hour}>
+                    <Text style = {isMeeting ? styles.text : styles.blackText}>{index}:00 {isMeeting ? 'Meeting' : ''} </Text>
+                </View>
+            ))}
+        </ScrollView>
+    );
+};
+
+const styles = StyleSheet.create({
+    scrollView: {
+        width: '100%',
+        backgroundColor: 'white',
+        marginTop: 10,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        overflow: 'hidden',
+    },
+    hour: {
+        backgroundColor: 'white',
+        width: '100%',
+        height: 30,
+        borderBottomWidth: 2,
+        borderBottomColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+
+    },
+    activeHour: {
+        backgroundColor: 'blue',
+        width: '100%',
+        height: 30,
+        borderBottomWidth: 2,
+        borderBottomColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingLeft: 55, // IF change text change this !!!!!!!
+    },
+    text: {
+        color: 'white',
+    },
+    blackText: {
+        color: 'black',
+    }
+
+});
+
+export default Calendar;

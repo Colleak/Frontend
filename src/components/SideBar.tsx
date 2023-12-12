@@ -16,6 +16,10 @@ const SideBar: React.FC<SideBarProps> = ({ navigation, onClose, currentScreen}) 
         navigation.navigate('Settings')
         onClose();
     }
+    const meetingPress = () => {
+        navigation.navigate('Meeting')
+        onClose();
+    }
     return (
         <View style={styles.sidebar}>
             <View style={styles.header}>
@@ -32,6 +36,11 @@ const SideBar: React.FC<SideBarProps> = ({ navigation, onClose, currentScreen}) 
                 </Text>
             </TouchableOpacity>
             {/* Add more items as needed */}
+            <TouchableOpacity style={styles.item} onPress={meetingPress}>
+                <Text style={styles.itemText}>
+                    {currentScreen === 'Meeting' ? '● Meeting' : 'Meeting'}
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 };

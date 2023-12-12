@@ -15,6 +15,7 @@ interface Location {
 
 interface EmployeeListProps {
     updateMarkerCoords: (coords: { x: number; y: number }) => void;
+    navigation: any;
 }
 
 interface EmployeeListState {
@@ -136,6 +137,7 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
                             findRouter={() => this.findRouter(employee)} //click to show location functionality
                             selectEmployee={this.selectEmployee}
                             isSelected={this.state.selectedEmployeeId === employee.id}
+                            navigation={this.props.navigation}  
                         />
                     ))}
                 </ScrollView>

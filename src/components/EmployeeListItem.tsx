@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Employee from "../models/user/Employees";
 import AppData from "../../AppData.json"
-
 interface EmployeeListItemProps {
     employee: Employee;
     currentUserId: string;
@@ -12,9 +11,10 @@ interface EmployeeListItemProps {
     findRouter: () => void;
     selectEmployee: (employeeId: string) => void;
     isSelected: boolean;
+    navigation: any;
 }
 
-const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUserId, isFavorite, updateFavorites, findRouter, selectEmployee, isSelected}) => {
+const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUserId, isFavorite, updateFavorites, navigation, findRouter, selectEmployee, isSelected}) => {
     const handlePress = () => {
         findRouter();
         selectEmployee(employee.id);
@@ -63,7 +63,9 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUs
     const buttonText = isSelected ? styles.selectedButtonText : styles.buttonText;
 
     const handleFavoritePress = () => {
-        updateFavorites(employee.id, !isFavorite);
+
+        //updateFavorites(employee.id, !isFavorite);
+        navigation.navigate('Meeting')
     };
 
     return (
