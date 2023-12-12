@@ -1,5 +1,6 @@
 export default interface mockEmployee {
-    receiver_id: number;
+    sender_id: string;
+    receiver_id: string;
     receiver_name: string;
-    is_on_location : boolean;
+    request_time: number;
 }
