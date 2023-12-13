@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Employee from "../models/user/Employees";
 import AppData from "../../AppData.json"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 interface EmployeeListItemProps {
     employee: Employee;
     currentUserId: string;
@@ -15,10 +16,11 @@ interface EmployeeListItemProps {
 }
 
 const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUserId, isFavorite, updateFavorites, navigation, findRouter, selectEmployee, isSelected}) => {
-    const handlePress = () => {
+    const handlePress = async() => {
         findRouter();
         selectEmployee(employee.id);
     };
+    
     const apiRequest = async (endpoint: string, method: string, data: object): Promise<any> => {
         const url = `${AppData.serverAddress}${endpoint}`;
         const requestBody = JSON.stringify(data);
@@ -62,8 +64,13 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUs
     const buttonStyle = isSelected ? styles.selectedButton : styles.button;
     const buttonText = isSelected ? styles.selectedButtonText : styles.buttonText;
 
-    const handleFavoritePress = () => {
-
+    const handleFavoritePress = async() => {
+        try {
+            await AsyncStorage.setItem('lastSelectedEmployee', employee.employeeName);
+            navigation.navigate('Meeting');
+        } catch (error) {
+            console.error('Failed to save to AsyncStorage:', error);
+        }
         //updateFavorites(employee.id, !isFavorite);
         navigation.navigate('Meeting')
     };

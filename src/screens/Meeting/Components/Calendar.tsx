@@ -38,7 +38,6 @@ const Calendar: React.FC = () => {
         
     const [meetings, setMeetings] = useState(Array(24).fill(false));
 
-useEffect(() => {
     // Function to fetch the last selected employee from AsyncStorage
     const fetchLastSelectedEmployee = async () => {
         try {
@@ -52,7 +51,6 @@ useEffect(() => {
     };
 
     fetchLastSelectedEmployee();
-}, []);
 
 useEffect(() => {
     async function getArray() {
@@ -83,9 +81,14 @@ useEffect(() => {
         <ScrollView style={styles.scrollView}>
             {lastSelectedEmployee ? (
                 <View style={styles.employeeNameView}>
-                    <Text style={styles.employeeNameText}>Last Selected Employee: {lastSelectedEmployee}</Text>
+                    <Text style={styles.employeeNameText}>Schedule: {lastSelectedEmployee}</Text>
                 </View>
-            ) : null}
+            ) :
+
+                <View style={styles.employeeNameView}>
+                    <Text style={styles.employeeNameText}>Schedule: Temp</Text>
+                </View>
+                }
             {meetings.map((isMeeting, index) => (
                 <View key={index} style={isMeeting ? styles.activeHour : styles.hour}>
                     <Text style = {isMeeting ? styles.text : styles.blackText}>{index}:00 {isMeeting ? 'Meeting' : ''} </Text>
@@ -105,17 +108,23 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     employeeNameView: {
-        // Add your desired styling here
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'blue',
+        width: '100%',
     },
     employeeNameText: {
-        // Add your desired styling here
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'white',
     },
     hour: {
         backgroundColor: 'white',
         width: '100%',
         height: 30,
-        borderBottomWidth: 2,
-        borderBottomColor: 'white',
+        borderBottomWidth: 1,
+        borderBottomColor: 'black',
         alignItems: 'center',
         justifyContent: 'center',
 
