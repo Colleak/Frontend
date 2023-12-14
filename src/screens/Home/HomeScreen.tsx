@@ -38,7 +38,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                     markerCoords={markerCoords}
                 />
             </View>
-            <EmployeeList updateMarkerCoords={updateMarkerCoords} navigat/>
+            <EmployeeList updateMarkerCoords={updateMarkerCoords} />
         </View>
     );
 }

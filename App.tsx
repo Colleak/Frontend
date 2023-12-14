@@ -8,25 +8,35 @@ import { StatusBar } from 'react-native';
 import LoadingComponent from "./src/components/LoadingComponents";
 import { Auth0Provider } from 'react-native-auth0';
 import AuthCheck from './src/components/AuthCheck';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
     const [fontsLoaded, setFontsLoaded] = useState(false);
+    const [userLoaded, setUserLoaded] = useState(false);
 
     useEffect(() => {
         async function loadFontsAsync() {
-            await Font.loadAsync({
-                'TTCommonsMedium': require('./src/assets/fonts/TTCommons-Medium.ttf'),
-                // add more fonts later
-            });
-            setFontsLoaded(true);
+            try {
+                await Font.loadAsync({
+                    'TTCommonsMedium': require('./src/assets/fonts/TTCommons-Medium.ttf'),
+                    // add more fonts later
+                });
+                setFontsLoaded(true);
+            } catch (e) {
+                console.log('Error loading fonts:', e);
+            }
         }
-
         loadFontsAsync();
     }, []);
 
-    if (!fontsLoaded) {
-        return <LoadingComponent/>;
-    }
+    useEffect(() => {
+        const checkUser = async () => {
+            const user = await AsyncStorage.getItem('user');
+            setUserLoaded(!!user);
+        };
+
+        checkUser();
+    }, []);
 
     return (
         <Auth0Provider domain={"dev-lohb1xoklmc7vqfg.us.auth0.com"} clientId={"1DEAvHt6GnbL0VApHfpYZgbuVAu0VqdC"}>
@@ -34,7 +44,7 @@ export default function App() {
                 <StatusBar barStyle="dark-content"/>
                 <NavigationContainer>
                     <AuthCheck />
-                    <RootNavigator/>
+                    {!fontsLoaded || !userLoaded ? <LoadingComponent/> : <RootNavigator/>}
                 </NavigationContainer>
             </>
         </Auth0Provider>
