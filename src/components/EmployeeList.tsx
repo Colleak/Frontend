@@ -15,6 +15,7 @@ interface Location {
 
 interface EmployeeListProps {
     updateMarkerCoords: (coords: { x: number; y: number }) => void;
+    setIsMarkerVisible: (isVisible: boolean) => void
     navigation: any;
 }
 
@@ -23,6 +24,7 @@ interface EmployeeListState {
     searchTerm: string;
     favorites: string[];
     selectedEmployeeId: string | null;
+    isOnLocation: boolean;
 }
 
 class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
@@ -31,6 +33,7 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         searchTerm: '',
         favorites: [],
         selectedEmployeeId: null,
+        isOnLocation: true,
     };
 
     componentDidMount() {
@@ -81,9 +84,15 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         const location = this.locations.find(loc => loc[employee.connectedRouterName]);
         if (location) {
             const coordinates = location[employee.connectedRouterName];
-            this.props.updateMarkerCoords(coordinates);
+            if (this.state.isOnLocation) {
+                this.props.updateMarkerCoords(coordinates);
+            }
         }
     }
+
+    setMarkerVisibility = (isVisible: boolean) => {
+        this.props.setIsMarkerVisible(isVisible);
+    };
 
     selectEmployee = (employeeId: string) => {
         this.setState({ selectedEmployeeId: employeeId });
@@ -137,7 +146,8 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
                             findRouter={() => this.findRouter(employee)} //click to show location functionality
                             selectEmployee={this.selectEmployee}
                             isSelected={this.state.selectedEmployeeId === employee.id}
-                            navigation={this.props.navigation}  
+                            setMarkerVisibility={this.setMarkerVisibility}
+                            navigation={this.props.navigation}
                         />
                     ))}
                 </ScrollView>

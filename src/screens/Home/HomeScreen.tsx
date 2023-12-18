@@ -11,7 +11,9 @@ type HomeScreenProps = {
     navigation: any;
 }
 
+
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
+    const [isMarkerVisible, setIsMarkerVisible] = useState(false);
         const [markerCoords, setMarkerCoords] = useState({ x: 0, y: 830 });
         const [sidebarVisible, setSidebarVisible] = useState(false);
     const permissionForLocation = useLocationPermission();
@@ -36,9 +38,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                     mapSource={require("../../assets/images/colleak2dfloorplan.png")}
                     markerSource={require("../../assets/images/man.png")}
                     markerCoords={markerCoords}
+                    isMarkerVisible={isMarkerVisible}
                 />
             </View>
-            <EmployeeList updateMarkerCoords={updateMarkerCoords} navigation = {navigation}/>
+            <EmployeeList updateMarkerCoords={updateMarkerCoords} setIsMarkerVisible={setIsMarkerVisible} navigation = {navigation}/>
         </View>
     );
 }
