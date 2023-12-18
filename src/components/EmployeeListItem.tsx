@@ -20,6 +20,16 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUs
         findRouter();
         selectEmployee(employee.id);
     };
+
+    const handleLongPress = async() => {
+        try {
+            await AsyncStorage.setItem('lastSelectedEmployee', employee.employeeName);
+            navigation.navigate('Meeting');
+        } catch (error) {
+            console.error('Failed to save to AsyncStorage:', error);
+        }
+        navigation.navigate('Meeting')
+    }
     
     const apiRequest = async (endpoint: string, method: string, data: object): Promise<any> => {
         const url = `${AppData.serverAddress}${endpoint}`;
@@ -65,18 +75,11 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUs
     const buttonText = isSelected ? styles.selectedButtonText : styles.buttonText;
 
     const handleFavoritePress = async() => {
-        try {
-            await AsyncStorage.setItem('lastSelectedEmployee', employee.employeeName);
-            navigation.navigate('Meeting');
-        } catch (error) {
-            console.error('Failed to save to AsyncStorage:', error);
-        }
-        //updateFavorites(employee.id, !isFavorite);
-        navigation.navigate('Meeting')
+        updateFavorites(employee.id, !isFavorite);
     };
 
     return (
-        <TouchableOpacity style={containerStyle} onPress={handlePress} onLongPress={handleFavoritePress}>
+        <TouchableOpacity style={containerStyle} onPress={handlePress} onLongPress={handleLongPress}>
             <View style={styles.nameWrapper}>
                 <Text style={nameStyle}>{employee.employeeName}</Text>
                 <View style={styles.buttonRow}>
