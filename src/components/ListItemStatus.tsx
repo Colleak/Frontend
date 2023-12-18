@@ -3,7 +3,7 @@ import MockMessage from "../models/user/mockEmployee";
 
 const ListItemStatus = {
   postATMAvailable: async (data: MockMessage): Promise<void> => {
-    const endpoint = 'available';
+    const endpoint = 'atm_available';
     const url = `${AppData.mockAddress}/${endpoint}`;
 
     const content = JSON.stringify(data);

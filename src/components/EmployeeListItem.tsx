@@ -62,6 +62,39 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUs
     }
   };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                console.log('So far so good (pre API)');
+                const statusResult = await ListItemStatus.postATMAvailable({
+                    sender_id: currentUserId,
+                    receiver_id: employee.id,
+                    receiver_name: employee.employeeName,
+                    request_time: 10
+                });
+
+                console.log('Status Result EQUALS ', statusResult);
+
+                if (!JSON.stringify(statusResult).includes('not')) {
+                    setStatusColor('green');
+                } else if (JSON.stringify(statusResult).includes('not')) {
+                    setStatusColor('red');
+                } else {
+                    setStatusColor('black');
+                }
+            } catch (error) {
+                console.error('Error getting status:', error);
+                throw error;
+            }
+        };
+
+        fetchData();
+        const intervalId = setInterval(() => {
+            fetchData();
+        }, 15 * 60 * 1000); // interval time in milliseconds (15 minutes default)
+        return () => clearInterval(intervalId);
+    }, [currentUserId, employee.id, employee.employeeName]);
+
     const pingUser = (currentUserId: string, targetUserId: string): Promise<void> => {
         return apiRequest('Office/sendping', 'POST', { sender_id: currentUserId, receiver_id: targetUserId });
     };
