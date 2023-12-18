@@ -1,4 +1,4 @@
 {
     "serverAddress": "https://colleak-back-end.azurewebsites.net/api/",
-    "mockAddress": "http://127.0.0.1:8001"
+    "mockAddress": "http://artofghost.pythonanywhere.com"
 }

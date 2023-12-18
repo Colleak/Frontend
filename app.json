@@ -35,6 +35,11 @@
           "domain": "dev-lohb1xoklmc7vqfg.us.auth0.com"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "707f8dbe-40b2-43c9-95c5-c9b83e0c2cdd"
+      }
+    }
   }
 }

@@ -1,21 +1,24 @@
-import { StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import * as Font from 'expo-font';
+import { StyleSheet, StatusBar, View, Text, Button } from 'react-native';
+import Auth0 from 'react-native-auth0';
 import { NavigationContainer } from '@react-navigation/native';
 import RootNavigator from './src/navigation/RootNavigator';
-import 'react-native-gesture-handler';
-import { StatusBar } from 'react-native';
 import LoadingComponent from "./src/components/LoadingComponents";
-import {useAuth0, Auth0Provider} from 'react-native-auth0';
+import * as Font from 'expo-font';
+
+const auth0 = new Auth0({
+    domain: 'dev-lohb1xoklmc7vqfg.us.auth0.com',
+    clientId: '1DEAvHt6GnbL0VApHfpYZgbuVAu0VqdC'
+});
 
 export default function App() {
     const [fontsLoaded, setFontsLoaded] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
         async function loadFontsAsync() {
             await Font.loadAsync({
                 'TTCommonsMedium': require('./src/assets/fonts/TTCommons-Medium.ttf'),
-                // add more fonts later
             });
             setFontsLoaded(true);
         }
@@ -23,20 +26,34 @@ export default function App() {
         loadFontsAsync();
     }, []);
 
-    if (!fontsLoaded) {
-        return <LoadingComponent/>;
-    }
+    const login = () => {
+        auth0.webAuth
+            .authorize({ scope: 'openid profile email' })
+            .then(credentials => {
+                // Successfully authenticated
+                setIsAuthenticated(true);
+                console.log(credentials);
+            })
+            .catch(error => console.log(error));
+    };
 
+    useEffect(() => {
+        if (!isAuthenticated) {
+            login();
+        }
+    }, [isAuthenticated]);
 
     return (
-        <Auth0Provider domain={"dev-lohb1xoklmc7vqfg.us.auth0.com"} clientId={"1DEAvHt6GnbL0VApHfpYZgbuVAu0VqdC"}>
-            <>
-                <StatusBar barStyle="dark-content"/>
-                <NavigationContainer>
-                    <RootNavigator/>
-                </NavigationContainer>
-            </>
-        </Auth0Provider>
+        <View style={{ flex: 1 }}>
+            <StatusBar barStyle="dark-content" />
+            <NavigationContainer>
+                {!fontsLoaded || !isAuthenticated ? (
+                    <LoadingComponent />
+                ) : (
+                    <RootNavigator />
+                )}
+            </NavigationContainer>
+        </View>
     );
 }
 
