@@ -44,9 +44,9 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({
 
         console.log('Status Result EQUALS ', statusResult);
 
-        if (JSON.stringify(statusResult).includes('currently available')) {
+        if (!JSON.stringify(statusResult).includes('not')) {
           setStatusColor('green');
-        } else if (JSON.stringify(statusResult).includes('not available')) {
+        } else if (JSON.stringify(statusResult).includes('not')) {
           setStatusColor('red');
         } else {
           setStatusColor('black');
