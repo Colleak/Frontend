@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     },
     markerContainer: {
         position: 'absolute',
+        zIndex: 1,
     },
     markerImage: {
         width: '100%', // Adjust the width and height as needed

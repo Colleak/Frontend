@@ -35,7 +35,7 @@ const Calendar: React.FC = () => {
     };
 
         const [lastSelectedEmployee, setLastSelectedEmployee] = useState<string>('');
-        
+
     const [meetings, setMeetings] = useState(Array(24).fill(false));
 
     // Function to fetch the last selected employee from AsyncStorage
@@ -72,7 +72,7 @@ useEffect(() => {
                 updatedMeetings[index] = true;
             }
         });
-        setMeetings(updatedMeetings); // Update de state
+        setMeetings(updatedMeetings); // Update the state
     });
 }, []);
 
@@ -91,7 +91,10 @@ useEffect(() => {
                 }
             {meetings.map((isMeeting, index) => (
                 <View key={index} style={isMeeting ? styles.activeHour : styles.hour}>
-                    <Text style = {isMeeting ? styles.text : styles.blackText}>{index}:00 {isMeeting ? 'Meeting' : ''} </Text>
+                    {/* Display time in half-hour increments */}
+                    <Text style={isMeeting ? styles.text : styles.blackText}>
+                        {8 + Math.floor(index / 2)}:{index % 2 === 0 ? '00' : '30'} {isMeeting ? 'Meeting' : ''}
+                    </Text>
                 </View>
             ))}
         </ScrollView>

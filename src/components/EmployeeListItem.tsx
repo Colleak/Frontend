@@ -11,21 +11,27 @@ interface EmployeeListItemProps {
     currentUserId: string;
     isFavorite: boolean;
     updateFavorites: (employeeId: string, isFavorite: boolean) => void;
-    findRouter: () => void;
     selectEmployee: (employeeId: string) => void;
     isSelected: boolean;
     navigation: any;
-   setMarkerVisibility: (isVisible: boolean) => void;
+    setMarkerVisibility: (isVisible: boolean) => void;
+    routerLocations: { [key: string]: { x: number; y: number } }; // Add this line
+    getRouterNumber: (routerName: string) => string; // Add this line
+    updateMarkerCoords: (coords: { x: number; y: number }) => void; // Add this line
 }
 
-const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUserId, isFavorite, updateFavorites, navigation, findRouter, selectEmployee, isSelected, setMarkerVisibility}) => {
+const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUserId, isFavorite, updateFavorites, navigation, selectEmployee, isSelected, setMarkerVisibility, routerLocations, getRouterNumber, updateMarkerCoords }) => {
     const [statusColor, setStatusColor] = useState('');
     const [isAvailableBool, setIsAvailableBool] = useState(false);
 
     const handlePress = () => {
-        findRouter();
+        const newCoords = routerLocations[getRouterNumber(employee.connectedRouterName)];
+        if (newCoords) {
+            updateMarkerCoords(newCoords);
+        }
         selectEmployee(employee.id);
-        setMarkerVisibility(isAvailableBool);
+        //setMarkerVisibility(isAvailableBool);
+        setMarkerVisibility(true); // Set isMarkerVisible to true for demo purpose, as the teams api would give different results per person but mock api does not
     };
     const handleLongPress = async() => {
         try {

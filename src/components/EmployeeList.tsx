@@ -15,8 +15,11 @@ interface Location {
 
 interface EmployeeListProps {
     updateMarkerCoords: (coords: { x: number; y: number }) => void;
-    setIsMarkerVisible: (isVisible: boolean) => void
+    setIsMarkerVisible: (isVisible: boolean) => void;
+    onSelectEmployee: (connectedRouterName: string) => void;
     navigation: any;
+    routerLocations: { [key: string]: { x: number; y: number } };
+    getRouterNumber: (routerName: string) => string;
 }
 
 interface EmployeeListState {
@@ -39,7 +42,7 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
     componentDidMount() {
         getApp().then(employeeData => {
             if (Array.isArray(employeeData)) {
-                this.setState({ employees: employeeData });
+                this.setState({employees: employeeData});
             } else {
                 console.error("Failed to fetch employee data:", employeeData);
             }
@@ -50,7 +53,7 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
     fetchFavorites = async () => {
         try {
             const favorites = await AsyncStorage.getItem('favorites');
-            this.setState({ favorites: favorites ? favorites.split(',') : [] });
+            this.setState({favorites: favorites ? favorites.split(',') : []});
         } catch (error) {
             console.error("Failed to fetch favorites:", error);
         }
@@ -58,7 +61,7 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
 
     updateFavorites = async (employeeId: string, isFavorite: boolean) => {
         try {
-            let { favorites } = this.state;
+            let {favorites} = this.state;
             const index = favorites.indexOf(employeeId);
 
             if (isFavorite && index === -1) {
@@ -68,47 +71,49 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
             }
 
             await AsyncStorage.setItem('favorites', favorites.join(','));
-            this.setState({ favorites });
+            this.setState({favorites});
         } catch (error) {
             console.error("Failed to update favorites:", error);
         }
     }
 
     locations: Location[] = [
-        { "EHV-AP-04-02": { "x": 400, "y": 400 } },
-        { "EHV-AP-04-03": { "x": 800, "y": 400 } },
-        { "EHV-AP-04-04": { "x": 400, "y": 800 } },
+        {"EHV-AP-04-02": {"x": 400, "y": 400}},
+        {"EHV-AP-04-03": {"x": 800, "y": 400}},
+        {"EHV-AP-04-04": {"x": 400, "y": 800}},
     ];
 
-    findRouter = (employee: Employee) => {
-        const location = this.locations.find(loc => loc[employee.connectedRouterName]);
-        if (location) {
-            const coordinates = location[employee.connectedRouterName];
-            if (this.state.isOnLocation) {
-                this.props.updateMarkerCoords(coordinates);
-            }
-        }
-    }
+    // Remove this function
+// findRouter = (employee: Employee) => {
+//     const location = this.locations.find(loc => loc[employee.connectedRouterName]);
+//     if (location) {
+//         const coordinates = location[employee.connectedRouterName];
+//         if (this.state.isOnLocation) {
+//             this.props.updateMarkerCoords(coordinates);
+//         }
+//     }
+// }
 
     setMarkerVisibility = (isVisible: boolean) => {
         this.props.setIsMarkerVisible(isVisible);
     };
 
-    selectEmployee = (employeeId: string) => {
-        this.setState({ selectedEmployeeId: employeeId });
+    selectEmployee = (employeeId: string, connectedRouterName: string) => {
+        this.setState({selectedEmployeeId: employeeId});
+        this.props.onSelectEmployee(connectedRouterName);
     };
 
     handleSearch = (text: string) => {
-        this.setState({ searchTerm: text });
+        this.setState({searchTerm: text});
     };
 
     render() {
-        const { employees, searchTerm, favorites } = this.state;
+        const {employees, searchTerm, favorites} = this.state;
 
         if (!employees) {
             return (
                 <ScrollView style={styles.loadingContainer}>
-                    <LoadingComponent />
+                    <LoadingComponent/>
                 </ScrollView>
             );
         }
@@ -129,7 +134,7 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         return (
             <View style={styles.container}>
                 <TextInput
-                    style={[styles.searchInput, { backgroundColor: 'white' }]}
+                    style={[styles.searchInput, {backgroundColor: 'white'}]}
                     placeholder="Search by name..."
                     value={searchTerm}
                     onChangeText={this.handleSearch}
@@ -143,11 +148,13 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
                             currentUserId={'652551bdb82d091daccff161'} //temporary, change to async value later
                             isFavorite={favorites.includes(employee.id)}
                             updateFavorites={this.updateFavorites}
-                            findRouter={() => this.findRouter(employee)} //click to show location functionality
-                            selectEmployee={this.selectEmployee}
+                            selectEmployee={() => this.selectEmployee(employee.id, employee.connectedRouterName)}
                             isSelected={this.state.selectedEmployeeId === employee.id}
                             setMarkerVisibility={this.setMarkerVisibility}
                             navigation={this.props.navigation}
+                            routerLocations={this.props.routerLocations}
+                            getRouterNumber={this.props.getRouterNumber}
+                            updateMarkerCoords={this.props.updateMarkerCoords}
                         />
                     ))}
                 </ScrollView>
