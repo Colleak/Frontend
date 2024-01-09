@@ -47,7 +47,7 @@ export default function App() {
         <View style={{ flex: 1 }}>
             <StatusBar barStyle="dark-content" />
             <NavigationContainer>
-                {!fontsLoaded || !isAuthenticated ? (
+                {!fontsLoaded /* || !isAuthenticated */ ? (
                     <LoadingComponent />
                 ) : (
                     <RootNavigator />

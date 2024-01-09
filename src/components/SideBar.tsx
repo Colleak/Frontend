@@ -35,12 +35,12 @@ const SideBar: React.FC<SideBarProps> = ({ navigation, onClose, currentScreen}) 
                     {currentScreen === 'Settings' ? '● Settings' : 'Settings'}
                 </Text>
             </TouchableOpacity>
-            {/* Add more items as needed */}
+            {/* Add more items as needed
             <TouchableOpacity style={styles.item} onPress={meetingPress}>
                 <Text style={styles.itemText}>
                     {currentScreen === 'Meeting' ? '● Meeting' : 'Meeting'}
                 </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     );
 };
