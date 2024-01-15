@@ -1,7 +1,5 @@
-# **Components Documentation**
-This document gives insight on how the components are structured.
-
-The components in this project are used to mainly seperate code and to re-use code. This makes the code easier to read and cleaner.
+# **List Components Documentation**
+This document gives insight on how the components related to the employee list are structured.
 
 <br><br>
 
