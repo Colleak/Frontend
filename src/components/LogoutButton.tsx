@@ -1,12 +1,15 @@
-import {useAuth0} from 'react-native-auth0';
+import Auth0 from 'react-native-auth0';
 import {Button} from "react-native";
 
-const LogoutButton = () => {
-    const {clearSession} = useAuth0();
+const auth0 = new Auth0({
+    domain: 'dev-lohb1xoklmc7vqfg.us.auth0.com',
+    clientId: '1DEAvHt6GnbL0VApHfpYZgbuVAu0VqdC'
+});
 
+const LogoutButton = () => {
     const onPress = async () => {
         try {
-            await clearSession();
+            await auth0.webAuth.clearSession({});
         } catch (e) {
             console.log(e);
         }
