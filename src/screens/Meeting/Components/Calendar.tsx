@@ -90,10 +90,10 @@ useEffect(() => {
                 </View>
                 }
             {meetings.map((isMeeting, index) => (
-                <View key={index} style={isMeeting ? styles.activeHour : styles.hour}>
-                    <Text style = {isMeeting ? styles.text : styles.blackText}>{index}:00 {isMeeting ? 'Meeting' : ''} </Text>
-                </View>
-            ))}
+    <View key={index} style={isMeeting ? styles.activeHour : styles.hour}>
+        <Text style = {isMeeting ? styles.text : styles.blackText}>{8 + Math.floor(index / 2)}:{index % 2 === 0 ? '00' : '30'} {isMeeting ? 'Meeting' : ''} </Text>
+    </View>
+))}
         </ScrollView>
     );
 };
