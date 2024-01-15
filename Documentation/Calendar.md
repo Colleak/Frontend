@@ -29,3 +29,5 @@ Inside each View component, it renders a Text component with the hour and meetin
 
 ## Outputs
 A scrollable view with the selected employee's name at the top (if available) and a list of hours with meeting indicators.
+
+![Alt text](image.png)
