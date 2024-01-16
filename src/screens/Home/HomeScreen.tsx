@@ -27,15 +27,35 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             setMarkerCoords(newCoords);
         }
     }, [markerCoords, setMarkerCoords]);
+    const getFloorFromRouterLocation = (routerLocation: string) => {
+        const floorNumber = parseInt(routerLocation.split('-')[1]);
+        return floorNumber;
+    };
+
+    const routerLocation = "EHV-00-03"; // replace this with actual router location
+    const floorNumber = getFloorFromRouterLocation(routerLocation);
+
+    const floorPlanImages: { [key: number]: any } = {
+        0: require('../../assets/images/colleak2dfloorplan0.png'),
+        1: require('../../assets/images/colleak2dfloorplan1.png'),
+        2: require('../../assets/images/colleak2dfloorplan2.png'),
+        3: require('../../assets/images/colleak2dfloorplan3.png'),
+        4: require('../../assets/images/colleak2dfloorplan4.png'),
+        5: require('../../assets/images/colleak2dfloorplan5.png'),
+    };
+
+    const mapSource = floorPlanImages[floorNumber];
+    const floor = `floor ${floorNumber}`;
+
     return (
         <View style={styles.container}>
             <NavBar onHamburgerPress={toggleSidebar}
                     logoSource={require("../../assets/images/ioLogoBlue.png")}/>
             {sidebarVisible && <SideBar navigation={navigation} onClose={toggleSidebar} currentScreen={"Home"} />}
             <View style={styles.mapContainer}>
-                <FloorText floor={"floor 1"}/>
+                <FloorText floor={floor}/>
                 <CustomMap
-                    mapSource={require("../../assets/images/colleak2dfloorplan1.png")}
+                    mapSource={mapSource}
                     markerSource={require("../../assets/images/man.png")}
                     markerCoords={markerCoords}
                     isMarkerVisible={isMarkerVisible}
