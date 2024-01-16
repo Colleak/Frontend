@@ -32,30 +32,54 @@ export default function App() {
 
 
     useEffect(() => {
-    const login = async () => {
-        try {
-            await auth0.webAuth.authorize({scope: 'openid profile email'});
-            setIsAuthenticated(true); // Set authenticated state on successful login
+       const login = async () => {
+    try {
+        const authResult = await auth0.webAuth.authorize({scope: 'openid profile email'});
+        setIsAuthenticated(true); // Set authenticated state on successful login
 
-            // Fetch IP from api.ipify.org
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                console.log('IP Address:', data.ip);
-            } catch (networkError) {
-                console.log('Error fetching IP address:', networkError);
+        // Get the user's profile information
+        const userInfo = await auth0.auth.userInfo({token: authResult.accessToken});
+
+        // Get the user's name from the Auth0 profile
+        const name = userInfo.name;
+        console.log('name:', name);
+
+        // Fetch IP from api.ipify.org
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            console.log('IP Address:', data);
+
+            // Send a PUT request to the specified address
+            const putResponse = await fetch(`https://colleak-back-end.azurewebsites.net/api/Employees/employee/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({name: name, ip: "192.168.2.224"}) //change hardcoded to dynamic (data.ip vgm)
+            });
+
+            // Log the response to the console
+            console.log('PUT Response:', putResponse);
+
+            if (!putResponse.ok) {
+                throw new Error('PUT request failed');
+                console.log('PUT Response:', putResponse);
             }
 
-        } catch (authError) {
-            console.log('Authentication error:', authError);
+        } catch (networkError) {
+            console.log('Error fetching IP address:', networkError);
         }
-    };
 
-    if (!isAuthenticated) {
-        login();
+    } catch (authError) {
+        console.log('Authentication error:', authError);
     }
-}, [isAuthenticated]);
+};
 
+        if (!isAuthenticated) {
+            login();
+        }
+    }, [isAuthenticated]);
 
     // Render
     return (
