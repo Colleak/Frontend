@@ -41,8 +41,6 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUs
         const url = `${AppData.serverAddress}${endpoint}`;
         const requestBody = JSON.stringify(data);
 
-    console.log(`Sending request to URL: ${url}`);
-    console.log(`Request body: ${requestBody}`);
 
     try {
       const response = await fetch(url, {
@@ -54,7 +52,7 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUs
       });
 
       const responseJson = await response.json();
-      console.log(`Response from ${url}:`, responseJson);
+      // console.log(`Response from ${url}:`, responseJson);
       return responseJson;
     } catch (error) {
       console.error('API request failed:', error);
@@ -65,15 +63,12 @@ const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUs
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log('So far so good (pre API)');
                 const statusResult = await ListItemStatus.postATMAvailable({
                     sender_id: currentUserId,
                     receiver_id: employee.id,
                     receiver_name: employee.employeeName,
                     request_time: 10
                 });
-
-                console.log('Status Result EQUALS ', statusResult);
 
                 if (!JSON.stringify(statusResult).includes('not')) {
                     setStatusColor('green');

@@ -7,9 +7,7 @@ const ListItemStatus = {
     const url = `${AppData.mockAddress}/${endpoint}`;
 
     const content = JSON.stringify(data);
-    console.log('Pre try' + content)
     try {
-      console.log('Pre fetch')
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -24,8 +22,6 @@ const ListItemStatus = {
       }
 
       const result = await response.json();
-      
-      console.log('result equals' + result)
 
       return result;
       

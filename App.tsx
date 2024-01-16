@@ -16,6 +16,7 @@ const auth0 = new Auth0({
 export default function App() {
     const [fontsLoaded, setFontsLoaded] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [expoipv4, setExpoipv4] = useState("");
 
     // Load fonts
     useEffect(() => {
@@ -29,18 +30,24 @@ export default function App() {
         loadFontsAsync();
     }, []);
 
-   // Authentication
-useEffect(() => {
+
+    useEffect(() => {
     const login = async () => {
         try {
-            await auth0.webAuth.authorize({ scope: 'openid profile email' });
+            await auth0.webAuth.authorize({scope: 'openid profile email'});
             setIsAuthenticated(true); // Set authenticated state on successful login
 
-            // Get Local IP
-            const ipAddress = await NetworkInfo.getIPAddress();
-            console.log('Local IP:', ipAddress);
-        } catch (error) {
-            console.log('Authentication error:', error);
+            // Fetch IP from api.ipify.org
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                console.log('IP Address:', data.ip);
+            } catch (networkError) {
+                console.log('Error fetching IP address:', networkError);
+            }
+
+        } catch (authError) {
+            console.log('Authentication error:', authError);
         }
     };
 
@@ -49,15 +56,17 @@ useEffect(() => {
     }
 }, [isAuthenticated]);
 
+
     // Render
     return (
-        <View style={{ flex: 1 }}>
-            <StatusBar barStyle="dark-content" />
+        <View style={{flex: 1}}>
+            <StatusBar barStyle="dark-content"/>
+            <Text style={{position: 'absolute', top: 0, zIndex: 1}}>{expoipv4}</Text>
             <NavigationContainer>
                 {!fontsLoaded || !isAuthenticated ? (
-                    <LoadingComponent />
+                    <LoadingComponent/>
                 ) : (
-                    <RootNavigator />
+                    <RootNavigator/>
                 )}
             </NavigationContainer>
         </View>
