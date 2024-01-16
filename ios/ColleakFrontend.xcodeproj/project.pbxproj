@@ -402,6 +402,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = ColleakFrontend/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Colleak;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -434,6 +435,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P24F2F7YXW;
 				INFOPLIST_FILE = ColleakFrontend/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Colleak;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
