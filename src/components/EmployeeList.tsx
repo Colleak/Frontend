@@ -15,9 +15,11 @@ interface Location {
 
 interface EmployeeListProps {
     updateMarkerCoords: (coords: { x: number; y: number }) => void;
-    setIsMarkerVisible: (isVisible: boolean) => void
+    setIsMarkerVisible: (isVisible: boolean) => void;
     navigation: any;
+    onEmployeeSelect: (employee: Employee) => void;
 }
+
 
 interface EmployeeListState {
     employees: Employee[] | null;
@@ -74,29 +76,31 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         }
     }
 
-    locations: Location[] = [
-        { "EHV-AP-04-02": { "x": 400, "y": 400 } },
-        { "EHV-AP-04-03": { "x": 800, "y": 400 } },
-        { "EHV-AP-04-04": { "x": 400, "y": 800 } },
-    ];
+    // locations: Location[] = [
+    //     { "EHV-AP-04-02": { "x": 400, "y": 400 } },
+    //     { "EHV-AP-04-03": { "x": 800, "y": 400 } },
+    //     { "EHV-AP-04-04": { "x": 400, "y": 800 } },
+    // ];
 
-    findRouter = (employee: Employee) => {
-        const location = this.locations.find(loc => loc[employee.connectedRouterName]);
-        if (location) {
-            const coordinates = location[employee.connectedRouterName];
-            if (this.state.isOnLocation) {
-                this.props.updateMarkerCoords(coordinates);
-            }
-        }
-    }
+    // findRouter = (employee: Employee) => {
+    //     const location = this.locations.find(loc => loc[employee.connectedRouterName]);
+    //     if (location) {
+    //         const coordinates = location[employee.connectedRouterName];
+    //         if (this.state.isOnLocation) {
+    //             this.props.updateMarkerCoords(coordinates);
+    //         }
+    //     }
+    // }
 
     setMarkerVisibility = (isVisible: boolean) => {
         this.props.setIsMarkerVisible(isVisible);
     };
 
-    selectEmployee = (employeeId: string) => {
-        this.setState({ selectedEmployeeId: employeeId });
-    };
+ selectEmployee = (employee: Employee) => {
+    this.setState({ selectedEmployeeId: employee.id });
+    console.log(employee.connectedRouterName);
+    this.props.onEmployeeSelect(employee); // Pass the entire employee object to the parent component
+};
 
     handleSearch = (text: string) => {
         this.setState({ searchTerm: text });
@@ -143,8 +147,8 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
                             currentUserId={'652551bdb82d091daccff161'} //temporary, change to async value later
                             isFavorite={favorites.includes(employee.id)}
                             updateFavorites={this.updateFavorites}
-                            findRouter={() => this.findRouter(employee)} //click to show location functionality
-                            selectEmployee={this.selectEmployee}
+                            // findRouter={() => this.findRouter(employee)} //click to show location functionality
+                            selectEmployee={() => this.selectEmployee(employee)}
                             isSelected={this.state.selectedEmployeeId === employee.id}
                             setMarkerVisibility={this.setMarkerVisibility}
                             navigation={this.props.navigation}

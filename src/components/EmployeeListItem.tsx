@@ -11,19 +11,20 @@ interface EmployeeListItemProps {
     currentUserId: string;
     isFavorite: boolean;
     updateFavorites: (employeeId: string, isFavorite: boolean) => void;
-    findRouter: () => void;
+    // findRouter: () => void;
     selectEmployee: (employeeId: string) => void;
     isSelected: boolean;
     navigation: any;
    setMarkerVisibility: (isVisible: boolean) => void;
 }
 
-const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUserId, isFavorite, updateFavorites, navigation, findRouter, selectEmployee, isSelected, setMarkerVisibility}) => {
+const EmployeeListItem: React.FC<EmployeeListItemProps> = ({ employee, currentUserId, isFavorite, updateFavorites, navigation, /*findRouter*/ selectEmployee, isSelected, setMarkerVisibility}) => {
     const [statusColor, setStatusColor] = useState('');
     const [isAvailableBool, setIsAvailableBool] = useState(false);
 
     const handlePress = () => {
-        findRouter();
+
+        // findRouter();
         selectEmployee(employee.id);
         setMarkerVisibility(isAvailableBool);
     };
