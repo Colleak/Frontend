@@ -33,10 +33,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigation }) => {
                 label="Location Permission"
                 onToggle={handlePermissionToggle}
             />
-            <LoginButton/>
-            <LogoutButton/>
-            <UserProfile/>
             <StatusButton/>
+            <LogoutButton/>
+            {/*<UserProfile/>*/}
         </View>
     );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'react-native';
+import {StyleSheet, Switch, Text, View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppData from '../../AppData.json';
 
@@ -28,7 +28,7 @@ const StatusButton = () => {
 
     const apiRequest = async (endpoint: string, userId: string) => {
         const url = `${AppData.serverAddress}${endpoint}`;
-        const data = { sender_id: userId };
+        const data = {sender_id: userId};
 
         console.log(`Sending request to URL: ${url}`);
         console.log(`Request body: ${JSON.stringify(data)}`);
@@ -93,11 +93,34 @@ const StatusButton = () => {
     };
 
     return (
-        <Button
-            onPress={onClick}
-            title={isOnLocation ? "On location" : "At home"}
-        />
+        <View style={styles.container}>
+            <Text style={styles.label}>
+                Working from home
+            </Text>
+            <Switch
+                trackColor={{false: "#575757", true: "blue"}}
+                ios_backgroundColor={"#ffffff"}
+                onValueChange={onClick}
+                value={!isOnLocation}
+            />
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        padding: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+    },
+    label: {
+        fontSize: 16,
+        color: '#000'
+    },
+});
 
 export default StatusButton;
