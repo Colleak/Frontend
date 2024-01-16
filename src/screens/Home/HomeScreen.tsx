@@ -35,7 +35,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={styles.mapContainer}>
                 <FloorText floor={"floor 1"}/>
                 <CustomMap
-                    mapSource={require("../../assets/images/colleak2dfloorplan.png")}
+                    mapSource={require("../../assets/images/colleak2dfloorplan1.png")}
                     markerSource={require("../../assets/images/man.png")}
                     markerCoords={markerCoords}
                     isMarkerVisible={isMarkerVisible}
