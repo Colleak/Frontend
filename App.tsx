@@ -8,6 +8,14 @@ import * as Font from 'expo-font';
 import { Alert } from 'react-native';
 import { NetworkInfo } from "react-native-network-info";
 
+//delete messages
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Failed prop type', 'There was a problem sending log message']);
+console.warn = () => {}
+window.onunhandledrejection = () => {};
+
+
+
 const auth0 = new Auth0({
     domain: 'dev-lohb1xoklmc7vqfg.us.auth0.com',
     clientId: '1DEAvHt6GnbL0VApHfpYZgbuVAu0VqdC'
