@@ -39,6 +39,10 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
     };
 
     componentDidMount() {
+        this.fetchData();
+    }
+
+    fetchData = () => {
         getApp().then(employeeData => {
             if (Array.isArray(employeeData)) {
                 this.setState({ employees: employeeData });
@@ -106,6 +110,13 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
         this.setState({ searchTerm: text });
     };
 
+    handleScroll = (event: any) => {
+        const offsetY = event.nativeEvent.contentOffset.y;
+        if (offsetY <= 0) { // Check if the user has scrolled to the top
+            this.fetchData();
+        }
+    }
+
     render() {
         const { employees, searchTerm, favorites } = this.state;
 
@@ -139,7 +150,7 @@ class EmployeeList extends Component<EmployeeListProps, EmployeeListState> {
                     onChangeText={this.handleSearch}
                 />
 
-                <ScrollView style={styles.employeeList}>
+                <ScrollView style={styles.employeeList} onScroll={this.handleScroll}>
                     {filteredEmployees.map((employee) => (
                         <EmployeeListItem
                             key={employee.id}

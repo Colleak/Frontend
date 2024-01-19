@@ -64,7 +64,7 @@ export default function App() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({employeeName: name, ip: data.ip}) //change hardcoded to dynamic (data.ip vgm)
+                body: JSON.stringify({employeeName: name, ip: "172.17.5.45"/*data.ip*/}) //change hardcoded to dynamic (data.ip vgm)
             });
 
             // Log the response to the console
