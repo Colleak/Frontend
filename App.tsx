@@ -7,6 +7,7 @@ import LoadingComponent from "./src/components/LoadingComponents";
 import * as Font from 'expo-font';
 import { Alert } from 'react-native';
 import { NetworkInfo } from "react-native-network-info";
+import NetInfo from "@react-native-community/netinfo";
 
 //delete messages
 import { LogBox } from 'react-native';
@@ -54,30 +55,39 @@ export default function App() {
 
         // Fetch IP from api.ipify.org
         try {
+            // Fetch the public IP address from an external service
             const response = await fetch('https://api.ipify.org?format=json');
-            const data = await response.json();
-            console.log('IP Address:', data);
+            const data2 = await response.json();
+            const publicIpAddress = data2.ip; // Get the public IP address
+            console.log('Public IP Address:', publicIpAddress);
 
-            // Send a PUT request to the specified address
+            // Get the local IP address using NetworkInfo
+            const localIpAddress = await NetworkInfo.getIPAddress();
+            console.log('Local IP Address:', localIpAddress);
+
+            // Send a POST request to the specified address with the public IP
+            // If you need to use the local IP instead, replace `publicIpAddress` with `localIpAddress`
             const putResponse = await fetch(`https://colleak-back-end.azurewebsites.net/api/Employees/employee/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({employeeName: name, ip: "172.17.5.45"/*data.ip*/}) //change hardcoded to dynamic (data.ip vgm)
+                body: JSON.stringify({ employeeName: name, ip: localIpAddress })
             });
 
-            // Log the response to the console
-            console.log('PUT Response:', putResponse);
-
             if (!putResponse.ok) {
-                throw new Error('PUT request failed');
-                console.log('PUT Response:', putResponse);
+                // If the response is not okay, throw an error
+                const errorBody = await putResponse.text();
+                throw new Error(`PUT request failed with status ${putResponse.status}: ${errorBody}`);
             }
 
+            // If the PUT request is successful, log the response status
+            console.log('PUT Response Status:', putResponse.status);
+
         } catch (networkError) {
-            console.log('Error fetching IP address:', networkError);
+            console.log('Error during network operations:', networkError);
         }
+
 
     } catch (authError) {
         console.log('Authentication error:', authError);
